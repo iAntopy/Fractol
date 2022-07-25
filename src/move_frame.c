@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mlx_swap_buffers.c                                 :+:      :+:    :+:   */
+/*   move_frame.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/07/04 21:19:22 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/04 23:13:14 by iamongeo         ###   ########.fr       */
+/*   Created: 2022/07/23 13:29:32 by iamongeo          #+#    #+#             */
+/*   Updated: 2022/07/23 13:59:52 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mlx.h"
-#include "mlxadds.h"
+#include "fractol.h"
 
-int	mlx_swap_buffers(t_mlx *mlx)
+void	frac_move_frame(t_frm *frm, double deltaX, double deltaY)
 {
-	t_img	*temp;
+	frm->px += deltaX * frm->zoom;
+	frm->py += deltaY * frm->zoom;
+	frac_update(frm);
+}
 
-	temp = mlx->screen_buff;
-	mlx->screen_buff = mlx->off_buff;
-	mlx->off_buff = temp;
-//	mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->screen_buff->img, 0, 0);
-	return (1);
+void	frac_zoom(t_frm *frm, double increment)
+{
+	frm->zoom *= 1 + increment;
+	frac_update(frm);
 }
