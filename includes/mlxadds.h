@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 17:32:17 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/22 23:11:12 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/25 21:50:55 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 # define MLXADDS_H
 
 # include <stdlib.h>
+# include <stdio.h>
 
 # include "mlx.h"
+# include "libft.h"
 
 enum	e_event_codes
 {
@@ -40,7 +42,7 @@ typedef struct	s_img_data
 
 typedef struct	s_mlx_data
 {
-	void	*mlx;
+	void	*conn;
 	void	*win;
 	int	width;
 	int	height;
@@ -57,5 +59,6 @@ void	mlx_draw_line(t_mlx *mlx, int start[2], int end[2], int col);
 void	mlx_clear_buffer(t_mlx *mlx); //Clears the off screen buffer by setting its data to 0.
 void	mlx_set_bg_color(t_mlx *mlx, int col);
 void	mlx_render_buffer(t_mlx *mlx);
+void	mlx_close(t_mlx *mlx);
 
 #endif

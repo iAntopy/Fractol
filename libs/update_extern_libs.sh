@@ -6,7 +6,7 @@
 #    By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/18 17:11:09 by iamongeo          #+#    #+#              #
-#    Updated: 2022/07/25 02:52:31 by iamongeo         ###   ########.fr        #
+#    Updated: 2022/07/25 16:03:46 by iamongeo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,14 +17,14 @@ then
 	MINILIBX_PATH='../../minilibx/minilibx-linux'
 elif [ $(uname) = 'Darwin' ]
 then
-	MINILIBX_PATH='../../minilibx/minilibx-macos'
+	MINILIBX_PATH='../../minilibx/minilibx_macos'
 else
 	MINILIBX_PATH='.'
 	echo "Unsuported OS"
 fi
 
 LIBFT_PATH='../../libft'
-MLXADDS_PATH='../../Zoobag_renderer/mlx_addons'
+MLXADDS_PATH='../../Zoobag_Renderer/mlx_addons'
 
 
 if [ -d $MINILIBX_PATH -a -f $MINILIBX_PATH'/libmlx.a' ]; then
@@ -34,9 +34,6 @@ else
 	echo "Missing minilibx library"
 fi
 
-echo $LIBFT_PATH
-echo "${CURR_PATH}/${MLXADDS_PATH}" 
-echo $MLXADDS_PATH 
 ls "${CURR_PATH}/${MLXADDS_PATH}" 
 if [ -d $MLXADDS_PATH -a -f $MLXADDS_PATH'/libmlxadds.a' ]; then
 	echo "creating libmlxadds.a link"

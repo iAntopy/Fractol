@@ -6,21 +6,26 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/25 03:06:37 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/25 19:55:16 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void	convert_pix_to_frame(t_frm *frm, t_pix *pix)
+void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print)
 {
-//	printf("converting starts :\n");
-//	printf("zoom %f, sx %i, sy %i\n", frm->zoom, pix->sx, pix->sy);
+	if (print)
+	{
+		printf("converting starts :\n");
+		printf("zoom %f, sx %i, sy %i\n", frm->zoom, pix->sx, pix->sy);
+	}
 	pix->fx = frm->zoom * FRM_WIDTH * ((pix->sx - SCN_MIDX) / SCN_WIDTH) + frm->px;
 	pix->fy = frm->zoom * FRM_HEIGHT * ((pix->sy - SCN_MIDY) / SCN_HEIGHT) + frm->py;
+	if (print)
+		printf("converted coords : x %f, y %f\n", pix->fx, pix->fy);
 }
 
-static void	draw_mandelbrot_pixel(t_img *buff, t_pix *pix, double dist, int iters, int palette[6][3], int print)
+static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int print)
 {
 	int	*pcols[2];
 	int	colors[3];
@@ -51,8 +56,8 @@ static void	draw_mandelbrot_pixel(t_img *buff, t_pix *pix, double dist, int iter
 //		printf("\niters %d, i_iters %d, norm_iters %f \n", iters, i_iters, norm_iters);
 //		printf("dist %f, dist ratio %f\n", dist, dist_ratio);
 //	}
-	pcols[0] = palette[i_iters];
-	pcols[1] = palette[i_iters + 1];
+	pcols[0] = pix->palette + (i_iters * 3);
+	pcols[1] = pcols[0] + 3;
 	colors[0] = (int)(pcols[0][0] + (pcols[1][0] - pcols[0][0]) * interpolation);
 	colors[1] = (int)(pcols[0][1] + (pcols[1][1] - pcols[0][1]) * interpolation);
 	colors[2] = (int)(pcols[0][2] + (pcols[1][2] - pcols[0][2]) * interpolation);
@@ -79,7 +84,13 @@ static void	draw_mandelbrot_pixel(t_img *buff, t_pix *pix, double dist, int iter
 //	color = (color * 0x100) + ft_clamp((0xff * green_ratio), 0, 0xff);
 //	color = (color * 0x100) + ft_clamp((0xff * blue_ratio), 0, 0xff);
 //	printf("(sx, sy), (fx, fy), dist, col : (%d, %d), (%f, %f), %f, %d\n", pix->sx, pix->sy, pix->fx, pix->fy, dist, color);
-	mlx_buff_put_pixel(buff, pix->sx, pix->sy, color);
+
+
+	return (color);
+//	mlx_buff_put_pixel(buff, pix->sx, pix->sy, color);
+//	mlx_buff_put_pixel(buff, pix->sx + 1, pix->sy, color);
+//	mlx_buff_put_pixel(buff, pix->sx, pix->sy + 1, color);
+//	mlx_buff_put_pixel(buff, pix->sx + 1, pix->sy + 1, color);
 }
 
 // Returns dist after 100 iterations
@@ -106,25 +117,27 @@ double	mandelbrot_dist(t_pix *pix, int *iters)
 	return (hypot(creal(z), cimag(z)));
 }
 
-void	draw_mandelbrot(t_mlx *mlx, t_frm *frm)
+//void	draw_mandelbrot(t_mlx *mlx, t_frm *frm, int y_range[2], void (*draw_func)())
+void	draw_mandelbrot(int *arr, t_frm *frm, int y_start, int y_end)
 {
 	t_pix	pix;
 	int		x;
 	int		y;
 	double	dist;
 	int	iters;
+	int		color;
 	
 //	pix.palette = (int *)frm->palette;
 	printf("Corner color in frame : r %d g %d b %d \n", frm->palette[0][0], frm->palette[0][1], frm->palette[0][2]);
-	y = -1;
-	while (++y < SCN_HEIGHT)
+	y = y_start - 1;
+	while (++y < y_end)
 	{
 		x = -1;
 		while (++x < SCN_WIDTH)
 		{
 			pix.sx = x;
 			pix.sy = y;
-			convert_pix_to_frame(frm, &pix);
+			convert_pix_to_frame(frm, &pix, (!y && !x));
 			dist = mandelbrot_dist(&pix, &iters);
 
 //			if ((45 < y && y < 55) && (45 < x && x < 55))
@@ -139,8 +152,17 @@ void	draw_mandelbrot(t_mlx *mlx, t_frm *frm)
 //				printf("converted pix to frame : (%f, %f)\n", pix.fx, pix.fy);
 //			}
 			if (iters < MAX_ITER)
-				draw_mandelbrot_pixel(mlx->off_buff, &pix, dist, iters, frm->palette, (!y && !x));
-			
+			{
+				pix.palette = (int *)frm->palette;
+				color = get_mandelbrot_pix_color(&pix, dist, iters, (!y && !x));
+//				mlx_buff_put_pixel(mlx_off_buff, x, y, color);
+//				mlx_buff_put_pixel(buff, x + 1, y, color);
+//				mlx_buff_put_pixel(buff, x, y + 1, color);
+//				mlx_buff_put_pixel(buff, x + 1, y + 1, color);
+				arr[(y - y_start) * SCN_WIDTH + x] = color;
+			}
+//			x += 2;
 		}
+//		y += 2;
 	}
 }

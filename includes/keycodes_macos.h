@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 19:07:16 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/05 20:00:19 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/25 22:32:29 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,19 +95,19 @@ enum {
 
 /* keycodes for keys that are independent of keyboard layout*/
 enum {
-  KC_Enter                    = 0x24,
+  KC_Enter                     = 0x24,
   KC_Tab                       = 0x30,
   KC_Space                     = 0x31,
-  KC_Delete                    = 0x33,
+  KC_Backspace                 = 0x33,
   KC_Escape                    = 0x35,
   KC_Command                   = 0x37,
-  KC_Shift_L                     = 0x38,
+  KC_Shift_L                   = 0x38,
   KC_CapsLock                  = 0x39,
   KC_Option                    = 0x3A,
   KC_Control                   = 0x3B,
-  KC_Shift_R                = 0x3C,
-  KC_Option_R               = 0x3D,
-  KC_Control_R              = 0x3E,
+  KC_Shift_R                   = 0x3C,
+  KC_Option_R                  = 0x3D,
+  KC_Control_R                 = 0x3E,
   KC_Function                  = 0x3F,
   KC_F17                       = 0x40,
   KC_VolumeUp                  = 0x48,
@@ -132,7 +132,7 @@ enum {
   KC_Help                      = 0x72,
   KC_Home                      = 0x73,
   KC_PageUp                    = 0x74,
-  KC_ForwardDelete             = 0x75,
+  KC_Delete                    = 0x75,
   KC_F4                        = 0x76,
   KC_End                       = 0x77,
   KC_F2                        = 0x78,
