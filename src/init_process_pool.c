@@ -6,12 +6,13 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/27 03:12:18 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/27 19:25:47 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fractol.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 static int	__proc_await_draw_order(int idx, int pp[4], t_frm frm)
 {
@@ -19,8 +20,10 @@ static int	__proc_await_draw_order(int idx, int pp[4], t_frm frm)
 	int	y_offset;
 
 	y_offset = idx * DRAWN_Y_RANGE;
-	close_fd_ptr_list(2, pp, pp + 3);
-	printf("process %d setup to draw at y_offset %d\n", idx, y_offset);
+	close(pp[0]);
+	close(pp[3]);
+//	close_fd_ptr_list(2, pp, pp + 3);
+	printf("process %d setup to draw at y_offset %d, with buffer size %zu\n", idx, y_offset, sizeof(img_stripe));
 	while (1)
 	{
 		printf("process %d listening to orders. Good boy\n", idx);
@@ -28,14 +31,16 @@ static int	__proc_await_draw_order(int idx, int pp[4], t_frm frm)
 		if (frm.instruction == SIG_STOP)
 		{
 			printf("process %d ordered to close\n", idx);
-			close_fd_ptr_list(2, pp + 1, pp + 2);
+			close(pp[1]);
+			close(pp[2]);
+//			close_fd_ptr_list(2, pp + 1, pp + 2);
 			break ;
 		}
 		else if (frm.instruction == SIG_DRAW)
 		{
-			printf("process %d ordered to draw\n", idx);
+			printf("process %d ordered to draw, last buff pix = %x\n", idx, img_stripe[DRAWN_AREA_NB_PIX - 1]);
 			draw_mandelbrot(img_stripe, &frm, y_offset, y_offset + DRAWN_Y_RANGE);
-			printf("process %d draw order completed. Writing img data to pipe\n", idx);
+			printf("process %d draw order completed. Writing img data to pipe last buff pix = %x\n", idx, img_stripe[DRAWN_AREA_NB_PIX - 1]);
 
 //			img_stripe[0] = 42;// DUMMY
 			write(pp[1], img_stripe, sizeof(img_stripe));
@@ -48,9 +53,20 @@ static int	__proc_await_draw_order(int idx, int pp[4], t_frm frm)
 	exit(0);
 }
 
+ssize_t	read_wrapper(int fd, char *buff, size_t n, ssize_t *acc)
+{
+	ssize_t	nchrs;
+
+	printf("Main reading at offset : %zd\n", *acc);
+	nchrs = read(fd, buff, n);
+	*acc += nchrs;
+	return (nchrs);
+}
+
 int	order_pool_draw(t_pool *pool, t_frm *frm, t_mlx *mlx)
 {
 	int	i;
+	ssize_t	proc_offset;
 //	int	drawn_stripe[DRAWN_AREA_NB_PIX];
 
 	printf("Main process ordering pool draw\n");
@@ -62,9 +78,12 @@ int	order_pool_draw(t_pool *pool, t_frm *frm, t_mlx *mlx)
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{
+		proc_offset = i * DRAWN_AREA_NB_BYTES;
 //		printf("Pretend draw read from process index : %d\n", i);
 		printf("Main process waiting for process %d results ...\n", i);
-		read(pool->rd_pipes[i], mlx->off_buff->addr + (i * DRAWN_AREA_NB_BYTES), DRAWN_AREA_NB_BYTES + 1);
+		while (read_wrapper(pool->rd_pipes[i], mlx->off_buff->addr + proc_offset, DRAWN_AREA_NB_BYTES, &proc_offset))
+			continue ;
+		printf("Main read %zd bytes from pipe vs DRAW_AREA_NB_BYTES %lu vs DRAW_AREA_NB_PIX %d\n", proc_offset, DRAWN_AREA_NB_BYTES, DRAWN_AREA_NB_PIX);
 		printf("Main process received process %d results and wrote data to image buffer.\n", i);
 	}
 	mlx_render_buffer(mlx);
@@ -147,7 +166,7 @@ int	init_process_pool(t_pool *pool, t_frm *frm)
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{
-		if (pipe(pp) < 0 || pipe(pp + 2) < 0)
+		if (pipe(pp) < 0 || pipe(pp + 2) < 0)
 			return (close_process_pool(pool, frm, "closing pool : pipe failed"));
 //		if (fcntl(pp[0], F_SETFL, O_NONBLOCKING) < 0)
 //			return (close_proccess_pool(pool));
@@ -156,7 +175,10 @@ int	init_process_pool(t_pool *pool, t_frm *frm)
 			__proc_await_draw_order(i, pp, *frm);//Does not return
 		else if (fork_id < 0)
 			return (close_process_pool(pool, frm, "closing pool : forking failed"));
-		close_fd_ptr_list(2, pp + 1, pp + 2);
+
+		close(pp[1]);
+		close(pp[2]);
+//		close_fd_ptr_list(2, pp + 1, pp + 2);
 
 		pool->pids[i] = fork_id;
 		pool->rd_pipes[i] = pp[0];

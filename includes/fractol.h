@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/27 02:56:35 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/27 19:25:49 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # define __SCN_WIDTH 640// CHANGE HERE
 # define __SCN_HEIGHT 480// CHANGE HERE
 
-# define NB_DRAWING_PROCS 8
+# define NB_DRAWING_PROCS 2
 
 //# define SCN_HEIGHT TRGT_SCN_HEIGHT + (TRGT_SCN_HEIGHT % NB_DRAWING_PROCS)
 # define SCN_WIDTH (__SCN_WIDTH + (__SCN_WIDTH % NB_DRAWING_PROCS))
@@ -57,7 +57,9 @@
 # define DRAWN_AREA_NB_BYTES (DRAWN_AREA_NB_PIX * sizeof(int))
 //# define DRAWN_LAST_AREA_NB_BYTES (DRAWN_LAST_Y_RANGE * SCN_WIDTH)
 
-# define MULTIPROC_RENDERING 1
+# ifndef MULTIPROC_RENDERING
+#  define MULTIPROC_RENDERING 1
+# endif
 
 typedef struct	s_mandelbrot_frame
 {

@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/26 23:47:28 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/27 18:05:30 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ void	frac_update(t_super *super)
 	else
 	{
 		printf("Clearing buffer\n");
-		printf("Clearing bufffffffffffffffffffffffffffffffffffffffffer\n");
 		printf("super->mlx : %p\n", super->mlx);
 		mlx_clear_buffer(super->mlx);
 		printf("buffer cleared \n");
@@ -42,6 +41,7 @@ void	frac_update_multiprocessor(t_super *super)
 	printf("buffer cleared\n");
 	order_pool_draw(super->pool, super->frm, super->mlx);
 	mlx_render_buffer(super->mlx);
+	printf(" <<<<<< ----- MULTIPROC UPDATE COMPLET ----- >>>>>>>\n\n\n");
 }
 
 void	give_mandelbrot_coord_rundown(t_pix *pix)
@@ -61,6 +61,8 @@ int	frac_mouse_click(int button, int x, int y, t_super *super)//t_frm *frm)
 	t_pix	pix;
 	t_frm	*frm;
 
+	if (y < 0 || x < 0)
+		return (0);
 	frm = super->frm;
 	printf("Pressed mouse button %d\n", button);
 	printf("clicked at screen coord : (%d, %d)\n", x, y);
@@ -204,6 +206,8 @@ int	main(void)
 	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &super_struct);
 	
 	mlx_set_bg_color(&mlx, 0x000000ff);
+	mlx_render_buffer(&mlx);
+	mlx_set_bg_color(&mlx, 0x00008000);
 	mlx_render_buffer(&mlx);
 //	order_pool_draw(&pool, &frm, &mlx);
 

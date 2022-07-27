@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/27 02:52:11 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/27 02:55:36 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/27 15:47:13 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	close_fd_ptr_list(int nb_fds, ...)
 	va_list	ap;
 	int	*fd;
 
-	va_start(nb_fds, ap);
+	va_start(ap, nb_fds);
 	while (nb_fds--)
 	{
 		fd = va_arg(ap, int *);
