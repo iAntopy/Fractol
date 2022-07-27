@@ -6,29 +6,29 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/26 18:23:07 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/27 03:12:18 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fractol.h>
 #include <unistd.h>
 
-static int	__proc_await_drawing_instruction(int idx, int pp[2], t_frm frm)
+static int	__proc_await_draw_order(int idx, int pp[4], t_frm frm)
 {
 	int	img_stripe[DRAWN_AREA_NB_PIX];
 	int	y_offset;
 
 	y_offset = idx * DRAWN_Y_RANGE;
+	close_fd_ptr_list(2, pp, pp + 3);
 	printf("process %d setup to draw at y_offset %d\n", idx, y_offset);
 	while (1)
 	{
 		printf("process %d listening to orders. Good boy\n", idx);
-		read(pp[0], &frm, sizeof(t_frm));
+		read(pp[2], &frm, sizeof(t_frm));
 		if (frm.instruction == SIG_STOP)
 		{
 			printf("process %d ordered to close\n", idx);
-			close(pp[0]);
-			close(pp[1]);
+			close_fd_ptr_list(2, pp + 1, pp + 2);
 			break ;
 		}
 		else if (frm.instruction == SIG_DRAW)
@@ -140,26 +140,27 @@ int	init_process_pool(t_pool *pool, t_frm *frm)
 {
 	int	i;
 	int	fork_id;
-	int	pp[2];
+	int	pp[4];
 //	t_ppkg	pkg;
 
 	ft_memclear(pool, sizeof(t_pool));
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{
-		if (pipe(pp) < 0)
+		if (pipe(pp) < 0 || pipe(pp + 2) < 0)
 			return (close_process_pool(pool, frm, "closing pool : pipe failed"));
 //		if (fcntl(pp[0], F_SETFL, O_NONBLOCKING) < 0)
 //			return (close_proccess_pool(pool));
-		pool->rd_pipes[i] = pp[0];
-		pool->wr_pipes[i] = pp[1];
 		fork_id = fork();
 		if (fork_id == 0)
-			__proc_await_drawing_instruction(i, pp, *frm);//Does not return
-		else if (fork_id == -1)
+			__proc_await_draw_order(i, pp, *frm);//Does not return
+		else if (fork_id < 0)
 			return (close_process_pool(pool, frm, "closing pool : forking failed"));
-//		pool->status[i] = P_WAITING;
+		close_fd_ptr_list(2, pp + 1, pp + 2);
+
 		pool->pids[i] = fork_id;
+		pool->rd_pipes[i] = pp[0];
+		pool->wr_pipes[i] = pp[3];
 		printf("Parent spawn child with pid : %d\n", fork_id);
 	}
 	pool->pool_status = STATUS_RUNNING;
