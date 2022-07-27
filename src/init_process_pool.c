@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/25 23:02:59 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/26 18:23:07 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ static int	__proc_await_drawing_instruction(int idx, int pp[2], t_frm frm)
 	printf("process %d setup to draw at y_offset %d\n", idx, y_offset);
 	while (1)
 	{
+		printf("process %d listening to orders. Good boy\n", idx);
 		read(pp[0], &frm, sizeof(t_frm));
 		if (frm.instruction == SIG_STOP)
 		{
@@ -32,11 +33,16 @@ static int	__proc_await_drawing_instruction(int idx, int pp[2], t_frm frm)
 		}
 		else if (frm.instruction == SIG_DRAW)
 		{
-			printf("process %d order to draw\n", idx);
+			printf("process %d ordered to draw\n", idx);
 			draw_mandelbrot(img_stripe, &frm, y_offset, y_offset + DRAWN_Y_RANGE);
+			printf("process %d draw order completed. Writing img data to pipe\n", idx);
+
 //			img_stripe[0] = 42;// DUMMY
 			write(pp[1], img_stripe, sizeof(img_stripe));
+			printf("process %d successfully wrote to pipe\n", idx);
+			printf("process %d wrap arround attempt\n", idx);
 		}
+		printf("process %d while over wraping around\n", idx);
 	}
 	printf("process %d closed\n", idx);
 	exit(0);
@@ -47,15 +53,19 @@ int	order_pool_draw(t_pool *pool, t_frm *frm, t_mlx *mlx)
 	int	i;
 //	int	drawn_stripe[DRAWN_AREA_NB_PIX];
 
+	printf("Main process ordering pool draw\n");
 	frm->instruction = SIG_DRAW;
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 		if (write(pool->wr_pipes[i], frm, sizeof(t_frm)) < 0)
 			return (close_process_pool(pool, frm, "order_pool_draw : closing pool : write to pipe failed"));
+	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{
 //		printf("Pretend draw read from process index : %d\n", i);
-		read(pool->rd_pipes[i], mlx->off_buff->addr + (i * DRAWN_AREA_NB_BYTES), DRAWN_AREA_NB_BYTES);
+		printf("Main process waiting for process %d results ...\n", i);
+		read(pool->rd_pipes[i], mlx->off_buff->addr + (i * DRAWN_AREA_NB_BYTES), DRAWN_AREA_NB_BYTES + 1);
+		printf("Main process received process %d results and wrote data to image buffer.\n", i);
 	}
 	mlx_render_buffer(mlx);
 	return (1);
@@ -91,29 +101,38 @@ int	close_process_pool(t_pool *pool, t_frm *frm, char *err_msg)
 	i = -1;
 	frm->instruction = SIG_STOP;
 	while (++i < NB_DRAWING_PROCS)
+	{
 		if (pool->wr_pipes[i] >= 0)
+		{
+			printf("Sending close signal to process %d\n", i);
 			write(pool->wr_pipes[i], frm, sizeof(t_frm));
+		}
+	}
 	i = -1;
 //	while (++i < NB_DRAWING_PROCS)
 //		read(pool->rt_pipes[i], dump, DRAWN_AREA_NB_BYTES);
 
 	while (++i < NB_DRAWING_PROCS)
 	{
+		printf("Closing process %d read pipe\n", i);
 		if (pool->rd_pipes[i] >= 0)
 			close(pool->rd_pipes[i]);
+		printf("Closing process %d write pipe\n", i);
 		if (pool->wr_pipes[i] >= 0)
 			close(pool->wr_pipes[i]);
+		printf("process %d pipe closed\n", i);
 		pool->wr_pipes[i] = -1;
 		pool->wr_pipes[i] = -1;
 		pool->pids[i] = 0;
 	}
 	if (err_msg)
 	{
+		printf("closing pipe due to error\n");
 		pool->pool_status = STATUS_BROKEN;
 		return (frac_error(err_msg, -1));
 	}
 	pool->pool_status = STATUS_CLOSED;
-	printf("all processes successfully closed !\n");
+	printf("all processes successfully closed with pool_status %d !\n", pool->pool_status);
 	return (0);
 }
 

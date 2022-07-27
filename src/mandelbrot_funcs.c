@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/25 19:55:16 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/26 17:14:52 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,10 @@ void	draw_mandelbrot(int *arr, t_frm *frm, int y_start, int y_end)
 	int	iters;
 	int		color;
 	
+	printf("pid %d draw_mandelbrot starts\n", getpid());
 //	pix.palette = (int *)frm->palette;
-	printf("Corner color in frame : r %d g %d b %d \n", frm->palette[0][0], frm->palette[0][1], frm->palette[0][2]);
+//	printf("Corner color in frame : r %d g %d b %d \n", frm->palette[0][0], frm->palette[0][1], frm->palette[0][2]);
+	
 	y = y_start - 1;
 	while (++y < y_end)
 	{
@@ -165,4 +167,5 @@ void	draw_mandelbrot(int *arr, t_frm *frm, int y_start, int y_end)
 		}
 //		y += 2;
 	}
+	printf("pid %d draw_mandelbrot complet\n", getpid());
 }

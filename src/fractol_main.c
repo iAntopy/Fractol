@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/25 23:27:02 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/26 23:47:28 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	frac_update(t_super *super)
 {
 	printf("Frac update :\n");
 	printf("Super multiproc : %d\n", super->multiproc);
-	printf("WOW WTF AYAYAY!\n");
 	if (super->multiproc)
 	{
 		printf("Multiproc update\n");
@@ -30,7 +29,7 @@ void	frac_update(t_super *super)
 		printf("super->mlx : %p\n", super->mlx);
 		mlx_clear_buffer(super->mlx);
 		printf("buffer cleared \n");
-//		draw_mandelbrot((int *)super->mlx->off_buff->addr, super->frm, 0, SCN_HEIGHT);
+		draw_mandelbrot((int *)super->mlx->off_buff->addr, super->frm, 0, SCN_HEIGHT);
 		mlx_render_buffer(super->mlx);
 	}
 	printf("Update DONE\n");
@@ -38,8 +37,9 @@ void	frac_update(t_super *super)
 
 void	frac_update_multiprocessor(t_super *super)
 {
-	printf("Entered multiproc update\n");
+	printf("\n\n <<<<<< ----- ENTERING MULTIPROC UPDATE ----- >>>>>>>\n");
 	mlx_clear_buffer(super->mlx);
+	printf("buffer cleared\n");
 	order_pool_draw(super->pool, super->frm, super->mlx);
 	mlx_render_buffer(super->mlx);
 }
@@ -114,28 +114,45 @@ void	frac_print_defines(void)
 int	on_close(t_super *super)
 {
 	int	p_status;
+	int	exit_status;
 
-	p_status = super->pool->pool_status;
+	printf("Attempting to close\n");
+	printf("attempting to close MLX\n");
 	mlx_close(super->mlx);
-	close_process_pool(super->pool, super->frm, NULL);
-	if (p_status == STATUS_CLOSED)
-		exit(0);
-	else if (p_status == STATUS_BROKEN)
-		exit(1);
-	else if (p_status == STATUS_RUNNING)
+	printf("MLX closed successfully\n");
+	exit_status = 0;
+	if (super->pool)
 	{
-		usleep(500000);
-		force_close_process_pool(super->pool, "pool still running at close. Forcing closure.");
-		exit(2);
+		printf("attempting to close process pool\n");
+		p_status = super->pool->pool_status;
+		printf("p_status : %d\n", p_status);
+		close_process_pool(super->pool, super->frm, NULL);
+		p_status = super->pool->pool_status;
+		if (p_status == STATUS_CLOSED)
+			printf("Process pool closed successfully.\n");
+		else if (p_status == STATUS_BROKEN)
+		{
+			printf("process pool broken !\n");
+			exit_status = 1;
+		}
+		else if (p_status == STATUS_RUNNING)
+		{
+			printf("pool still running. Forcing closure\n");
+			usleep(500000);
+			force_close_process_pool(super->pool, "pool still running at close. Forcing closure.");
+			printf("Forced closure complet.\n");
+			exit_status = 2;
+		}
 	}
-	exit(0);
+	printf("Fractol closure complet and successfull !\n");
+	exit(exit_status);
 }
 
 int	main(void)
 {
 	t_mlx	mlx;
 	t_frm	frm;
-//	t_pool	pool;
+	t_pool	pool;
 	t_super	super_struct;
 
 	frm.zoom = INIT_ZOOM;
@@ -143,8 +160,14 @@ int	main(void)
 	frm.py = INIT_POSY;
 	init_base_color_palette(&frm);
 	
-//	if (init_process_pool(&pool, &frm) < 0)
-//		return (-1);
+	if (MULTIPROC_RENDERING)
+	{
+		if (init_process_pool(&pool, &frm) < 0 || (pool.pool_status != STATUS_RUNNING))
+		{
+			close_process_pool(&pool, &frm, "Pool initialization failed");
+			return (-1);
+		}
+	}
 //	if (pool.pool_status == STATUS_RUNNING)
 //		printf("Pool is active and ready to draw ...\n");
 //	close_process_pool(&pool, &frm, NULL);
@@ -169,8 +192,10 @@ int	main(void)
 	printf("mlx->off_buff : %p\n", mlx.off_buff);
 	super_struct.mlx = &mlx;
 	super_struct.frm = &frm;
-	super_struct.pool = NULL;//&pool;
-	super_struct.multiproc = 0;
+	super_struct.multiproc = MULTIPROC_RENDERING;
+	super_struct.pool = NULL;
+	if (MULTIPROC_RENDERING)
+		super_struct.pool = &pool;
 
 	printf("buff1  line_len, bytes per pixel: %d x %d\n", mlx.buff1.line_len, mlx.buff1.bytes_per_pxl);
 
@@ -179,8 +204,6 @@ int	main(void)
 	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &super_struct);
 	
 	mlx_set_bg_color(&mlx, 0x000000ff);
-	mlx_render_buffer(&mlx);
-	mlx_set_bg_color(&mlx, 0x0000ff00);
 	mlx_render_buffer(&mlx);
 //	order_pool_draw(&pool, &frm, &mlx);
 

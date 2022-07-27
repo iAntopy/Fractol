@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/25 23:23:46 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/07/26 19:43:01 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,9 @@ enum	e_process_status
 
 enum	e_pool_status
 {
-	STATUS_RUNNING,
-	STATUS_CLOSED,
-	STATUS_BROKEN
+	STATUS_RUNNING = 0,
+	STATUS_CLOSED = 1,
+	STATUS_BROKEN = 2
 };
 
 enum	e_drawing_instructions
@@ -147,6 +147,5 @@ int	init_process_pool(t_pool *pool, t_frm *frm);
 int	close_process_pool(t_pool *pool, t_frm *frm, char *err_msg);
 int	force_close_process_pool(t_pool *pool, char *err_msg);
 int	order_pool_draw(t_pool *pool, t_frm *frm, t_mlx *mlx);
-
 
 #endif
