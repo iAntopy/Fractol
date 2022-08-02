@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/01 19:42:02 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/02 00:16:06 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ enum	e_pool_status
 
 enum	e_drawing_instructions
 {
-	SIG_STOP,
-	SIG_DRAW
+	SIG_STOP = SIGSTOP,
+	SIG_DRAW = SIGUSR1
 };
 
 // extra mem allocation at end of lines + extra line to comply with xserver buffer formating.
@@ -109,16 +109,14 @@ typedef struct	s_shared_mem_mproc_double_buff
 	int	proc_draw_done[NB_DRAWING_PROCS];
 	int	buff1[(SCN_WIDTH + 8) * (SCN_HEIGHT + 1)];
 	int	buff2[(SCN_WIDTH + 8) * (SCN_HEIGHT + 1)];
-}	t_sbuffs;
+	t_frm	frm;
+}	t_shmem;
 
 // Process pool data held by main process
 typedef struct	s_process_pool
 {
 	int	pool_status;
 	int	pids[NB_DRAWING_PROCS];
-//	int	status[NB_DRAWING_PROCS]; // 1: live 0: finished/not started, -1: error;
-	int	rd_pipes[NB_DRAWING_PROCS];
-	int	wr_pipes[NB_DRAWING_PROCS];
 }	t_pool;
 /*
 // drawing instruction package sent to children
@@ -130,12 +128,14 @@ typedef struct	s_process_pkg
 }	t_ppkg;
 */
 
+
 // containes all major sub structures for global management
 typedef struct	s_super_struct
 {
 	t_mlx	*mlx;
 	t_pool	*pool;
 	t_frm	*frm;
+	t_shmem	*shmem;
 	int		multiproc;
 }	t_super;
 

@@ -12,7 +12,7 @@ LIBS		=  $(LIBS_DIR)libft.a $(LIBS_DIR)libmlxadds.a $(LIBS_DIR)libmlx.a
 
 CC		= gcc
 
-CFLAGS		= -Wall -Wextra -Werror -O2
+CFLAGS		= -Wall -Wextra -Werror -O2 -lm
 
 FRAMEWORKS	= 
 
