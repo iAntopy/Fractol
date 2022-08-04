@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/02 00:16:06 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/03 22:25:07 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@
 # include <math.h>
 # include <complex.h>
 # include <signal.h>
+# include <sys/mman.h>
+
+//# include <OpenGL/gl3.h>
+//# include <AppKit/NSOpenGLView.h>
+
+
 
 # include "mlx.h"
 # include "mlxadds.h"
@@ -53,8 +59,7 @@
 # define DRAWN_Y_BYTES (SCN_HEIGHT / NB_DRAWING_PROCS)
 //# define DRAWN_LAST_Y_RANGE SCN_HEIGHT - ((NB_DRAWING_PROCS - 1) * DRAWN_Y_RANGE)
 
-# define DRAWN_AREA_NB_PIX (DRAWN_Y_RANGE * SCN_WIDTH)
-# define DRAWN_AREA_NB_BYTES (DRAWN_AREA_NB_PIX * sizeof(int))
+# define BUFFER_SIZE ((SCN_WIDTH + 32) * (SCN_HEIGHT + 4) * sizeof(int))
 //# define DRAWN_LAST_AREA_NB_BYTES (DRAWN_LAST_Y_RANGE * SCN_WIDTH)
 
 # ifndef MULTIPROC_RENDERING
@@ -63,7 +68,6 @@
 
 typedef struct	s_mandelbrot_frame
 {
-	int	instruction;
 	double	zoom;
 	double	px;
 	double	py;
@@ -104,12 +108,16 @@ enum	e_drawing_instructions
 };
 
 // extra mem allocation at end of lines + extra line to comply with xserver buffer formating.
+// mem unused if OpenGL used.
 typedef struct	s_shared_mem_mproc_double_buff
 {
-	int	proc_draw_done[NB_DRAWING_PROCS];
-	int	buff1[(SCN_WIDTH + 8) * (SCN_HEIGHT + 1)];
-	int	buff2[(SCN_WIDTH + 8) * (SCN_HEIGHT + 1)];
 	t_frm	frm;
+	int		proc_draw_done[NB_DRAWING_PROCS];
+	t_img	*draw_buff;	//PTR TO ONE OF THE BUFFERS BELOW IN WHICH TO DRAW
+	t_img	buff1;
+	t_img	buff2;
+	char	buff1_data[BUFFER_SIZE];//(SCN_WIDTH + 32) * (SCN_HEIGHT + 4) * sizeof(int)];
+	char	buff2_data[BUFFER_SIZE];//(SCN_WIDTH + 32) * (SCN_HEIGHT + 4) * sizeof(int)];
 }	t_shmem;
 
 // Process pool data held by main process
@@ -143,7 +151,7 @@ typedef struct	s_super_struct
 // FUNCTION PROTOTYPES
 void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print);
 //void	draw_mandelbrot(t_mlx *mlx, t_frm *frm);
-void	draw_mandelbrot(int *arr, t_frm *frm, int y_start, int y_end);
+void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end);
 double	mandelbrot_dist(t_pix *pix, int *iters);
 void	frac_move_frame(t_super *super, double deltaX, double deltaY);
 void	frac_zoom(t_super *super, double increment);
@@ -153,10 +161,10 @@ void	frac_update_multiprocessor(t_super *super);
 t_frm	*init_base_color_palette(t_frm *frm);
 
 // DRAW POOL FUNCTIONS
-int	init_process_pool(t_pool *pool, t_frm *frm);
-int	close_process_pool(t_pool *pool, t_frm *frm, char *err_msg);
+int	init_process_pool(t_pool *pool, t_shmem *sm);//, t_frm *frm);
+int	close_process_pool(t_pool *pool, char *err_msg);
 int	force_close_process_pool(t_pool *pool, char *err_msg);
-int	order_pool_draw(t_pool *pool, t_frm *frm, t_mlx *mlx);
+int	order_pool_draw(t_pool *pool, t_shmem *sm);//t_frm *frm, t_mlx *mlx);
 
 void	close_fd_ptr_list(int nb_fds, ...);
 #endif

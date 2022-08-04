@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/02 00:17:01 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/02 01:04:08 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/02 15:14:33 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
-#include <wait.h>
+#include <sys/wait.h>
 
 typedef struct	s_shared_memory
 {
@@ -25,7 +25,14 @@ typedef struct	s_shared_memory
 
 void	__crash_exit(void)
 {
+	printf("Child process exiting\n");
 	exit(0);
+}
+
+void	child_labor_activated(t_shmem *shmem)
+{
+	printf("Child labor activated !\n");
+	printf("shared memory pointer is : %p\n", shmem);
 }
 
 void	__proc_job(t_shmem *shmem)
@@ -33,23 +40,36 @@ void	__proc_job(t_shmem *shmem)
 	int		sig;
 	sigset_t	sigset;
 
-	printf("sigmnal set init and adding SIGSTOP in set\n");
+	printf("signal set init and adding SIGTERM in set\n");
 	sigemptyset(&sigset);
-	printf("sigemptyset");
-	sigaddset(&sigset, SIGSTOP);
-	printf("sigset setup complet\n");
+	printf("sigemptyset initialized\n");
 
-	printf("waiting for SIGSTOP signal\n");
-	sigwait(&sigset, &sig);
-	printf("received signal %d\n", sig);
+	while (1)
+	{
+		sigaddset(&sigset, SIGTERM);
+		sigaddset(&sigset, SIGUSR1);
+		printf("waiting for signal\n");
+		sigwait(&sigset, &sig);
+		if (sig == SIGTERM)
+			__crash_exit();
+		else if (sig == SIGUSR1)
+			child_labor_activated(shmem);
+		printf("received signal %d\n", sig);
+	}
 	exit(0);
 }
 
 int	test_signals(t_shmem *sm, int child_pid)
 {
 	sleep(1);
-	printf("Parent sending kill signal\n");
-	kill(child_pid, SIGSTOP);
+	printf(" o--- Parent sending child labor signal 1\n");
+	kill(child_pid, SIGUSR1);
+	sleep(1);
+	printf(" o--- Parent sending child labor signal 2\n");
+	kill(child_pid, SIGUSR1);
+	sleep(2);
+	printf(" o--- Parent sending stop signal\n");
+	kill(child_pid, SIGTERM);
 	return (0);
 }
 

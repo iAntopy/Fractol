@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/28 16:20:53 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/25 20:44:35 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/03 22:26:09 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,8 @@ int		malloc_free_p(size_t size, void **ptr);
 void	*malloc_free(size_t size, void **ptr);
 
 /////// GET_NEXT_LINE ////////
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 4096
+# ifndef GNL_BUFFER_SIZE
+#  define GNL_BUFFER_SIZE 4096
 # endif
 
 typedef struct s_gdl

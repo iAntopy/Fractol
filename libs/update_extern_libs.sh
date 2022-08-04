@@ -6,7 +6,7 @@
 #    By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/18 17:11:09 by iamongeo          #+#    #+#              #
-#    Updated: 2022/07/25 16:03:46 by iamongeo         ###   ########.fr        #
+#    Updated: 2022/08/03 18:13:47 by iamongeo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,13 @@ fi
 LIBFT_PATH='../../libft'
 MLXADDS_PATH='../../Zoobag_Renderer/mlx_addons'
 
+if [ $1 = "re" ]; then
+	echo "REMOVING ALL LIB LINKS"
+	rm lib*.a
+else
+	echo "DO NOT REMOVE LIB LINK PRESENT"
+
+fi
 
 if [ -d $MINILIBX_PATH -a -f $MINILIBX_PATH'/libmlx.a' ]; then
 	echo "creating libmlx.a link"

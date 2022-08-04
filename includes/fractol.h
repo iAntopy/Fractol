@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/01 19:42:02 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/02 16:51:02 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,10 +106,13 @@ enum	e_drawing_instructions
 // extra mem allocation at end of lines + extra line to comply with xserver buffer formating.
 typedef struct	s_shared_mem_mproc_double_buff
 {
-	int	proc_draw_done[NB_DRAWING_PROCS];
-	int	buff1[(SCN_WIDTH + 8) * (SCN_HEIGHT + 1)];
-	int	buff2[(SCN_WIDTH + 8) * (SCN_HEIGHT + 1)];
-}	t_sbuffs;
+	int		proc_draw_done[NB_DRAWING_PROCS];
+	char	*draw_buff;// 								Current buffer to draw on. points to one of buffers below.
+	t_img	buff1;//	Copy of mlx->buff1
+	t_img	buff2;//	Copy of mlx->buff2
+	int		buff1_data[(SCN_WIDTH + 8) * (SCN_HEIGHT + 1)];
+	int		buff2_data[(SCN_WIDTH + 8) * (SCN_HEIGHT + 1)];
+}	t_shmem;
 
 // Process pool data held by main process
 typedef struct	s_process_pool
@@ -136,6 +139,7 @@ typedef struct	s_super_struct
 	t_mlx	*mlx;
 	t_pool	*pool;
 	t_frm	*frm;
+	t_shmem	*shmem;
 	int		multiproc;
 }	t_super;
 

@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/28 00:30:45 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/03 21:48:20 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ double	mandelbrot_dist(t_pix *pix, int *iters)
 }
 
 //void	draw_mandelbrot(t_mlx *mlx, t_frm *frm, int y_range[2], void (*draw_func)())
-void	draw_mandelbrot(int *arr, t_frm *frm, int y_start, int y_end)
+void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end)
 {
 	t_pix	pix;
 	int		x;
@@ -128,12 +128,15 @@ void	draw_mandelbrot(int *arr, t_frm *frm, int y_start, int y_end)
 	int		color;
 	
 	printf("pid %d draw_mandelbrot starts\n", getpid());
+	printf("pid %d y_start, y_end, y_range : %d, %d, %d\n", getpid(), y_start, y_end, y_end - y_start);
 //	pix.palette = (int *)frm->palette;
 //	printf("Corner color in frame : r %d g %d b %d \n", frm->palette[0][0], frm->palette[0][1], frm->palette[0][2]);
 	
 	y = y_start - 1;
+	printf("process %d init y : %d\n", getpid(), y);
 	while (++y < y_end)
 	{
+		printf("process %d drawing line %d\n", getpid(), y);
 		x = -1;
 		while (++x < SCN_WIDTH)
 		{
@@ -141,6 +144,8 @@ void	draw_mandelbrot(int *arr, t_frm *frm, int y_start, int y_end)
 			pix.sy = y;
 			convert_pix_to_frame(frm, &pix, (!y && !x));
 			dist = mandelbrot_dist(&pix, &iters);
+			if ((y == y_start) && !x)
+				printf("pid %d found dist %f\n", getpid(), dist);
 
 //			if ((45 < y && y < 55) && (45 < x && x < 55))
 //			{
@@ -157,12 +162,20 @@ void	draw_mandelbrot(int *arr, t_frm *frm, int y_start, int y_end)
 			{
 				pix.palette = (int *)frm->palette;
 				color = get_mandelbrot_pix_color(&pix, dist, iters, (!y && !x));
-//				mlx_buff_put_pixel(mlx_off_buff, x, y, color);
+				if ((y == y_start) && !x)
+					printf("pid %d put color %d to buffer. Putting pixel to buffer\n", getpid(), color);
+
+				mlx_buff_put_pixel(buff, x, y, color);
+				if ((y == y_start) && !x)
+					printf("pid %d put pixel to buffer\n", getpid());
 //				mlx_buff_put_pixel(buff, x + 1, y, color);
 //				mlx_buff_put_pixel(buff, x, y + 1, color);
 //				mlx_buff_put_pixel(buff, x + 1, y + 1, color);
-				arr[(y - y_start) * SCN_WIDTH + x] = color;
+//				mlx_buff_put_pixel
+//				arr[(y - y_start) * SCN_WIDTH + x] = color;
 			}
+			else if ((y == y_start) && !x)
+				printf("process %d distance not big enough to impress\n", getpid());
 //			x += 2;
 		}
 //		y += 2;
