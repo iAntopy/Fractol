@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/04 20:27:25 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/04 21:35:30 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,58 +53,24 @@ int	on_close(t_super *super)
 	exit(exit_status);
 }
 
-void	frac_update(t_super *super)
-{
-/*
-	printf("Frac update :\n");
-	printf("Super multiproc : %d\n", super->multiproc);
-	if (super->multiproc)
-	{
-*/
-	printf("Multiproc update\n");
-	frac_update_multiprocessor(super);
-/*
-	}
-	else
-	{
-		printf("Clearing buffer\n");
-		printf("super->mlx : %p\n", super->mlx);
-		mlx_clear_buffer(super->mlx);
-		printf("buffer cleared \n");
-		draw_mandelbrot((int *)super->mlx->off_buff->addr, super->frm, 0, SCN_HEIGHT);
-		mlx_render_buffer(super->mlx);
-	}
-*/
-	printf("Update DONE\n");
-}
-
-
-void	frac_update_multiprocessor(t_super *sup)
+void	frac_update(t_super *sup)
 {
 	t_shmem	*sm;
 	t_img	*buff;
 
 	sm = sup->shmem;
 	printf("\n\n <<<<<< ----- ENTERING MULTIPROC UPDATE ----- >>>>>>>\n");
-	printf("frac update : pre clear mlx->buff_size : %zu\n", sup->mlx->buff_size);
-//	mlx_clear_buffer(sup->mlx);
-	printf("buffer cleared\n");
-//	if (sup->mlx->off_buff == &sup->mlx->buff2)
 	if (sm->draw_buff == &sm->buff1)
 		sm->draw_buff = &sm->buff2;
 	else	
 		sm->draw_buff = &sm->buff1;
 	buff = sm->draw_buff;
 	ft_memclear(buff->addr, sup->mlx->buff_size);
-	printf("pool ptr : %p\n", sup->pool);
-	printf("pool->pids ptr : %p\n", sup->pool->pids);
-	printf("pool pids 1 and 2 : %d, %d\n", sup->pool->pids[0], sup->pool->pids[1]);
 	if (order_pool_draw(sup->pool, sm) < 0)
 	{
 		on_close(sup);
 		return ;
 	}
-//	ft_memcpy(sup->mlx->off_buff->addr, sup->shmem->draw_buff->addr, sup->mlx->buff_size);
 	ft_memcpy(sup->mlx->off_buff->addr, buff->addr, sup->mlx->buff_size);
 	mlx_render_buffer(sup->mlx);
 	printf(" <<<<<< ----- MULTIPROC UPDATE COMPLET ----- >>>>>>>\n\n\n");
@@ -137,7 +103,7 @@ int	frac_mouse_click(int button, int x, int y, t_super *super)//t_frm *frm)
 	convert_pix_to_frame(frm, &pix, 1);
 	printf("converted screen coords to : (%f, %f)\n", pix.fx, pix.fy);
 	if (button == 1)
-		frac_move_frame(super, (pix.fx - frm->px) / frm->zoom, (pix.fy - frm->py) / frm->zoom);
+		frac_set_frame_pos(super, pix.fx, pix.fy);
 	else if (button == 3)
 		give_mandelbrot_coord_rundown(&pix);
 	return (0);
@@ -184,26 +150,6 @@ void	frac_print_defines(void)
 	printf("	BUFFER_SIZE : %zu\n", BUFFER_SIZE);
 }
 
-/*
-static void	set_mlx_buffers_as_shared_memory(t_mlx *mlx, t_shmem *sm)
-{
-	mlx_img_list_t	*img1;
-	mlx_img_list_t	*img2;
-
-	img1 = (mlx_img_list_t *)mlx->screen_buff->img;
-	img2 = (mlx_img_list_t *)mlx->off_buff->img;
-	free(img1->buffer);
-	free(img2->buffer);
-	img1->buffer = (char *)sm->buff1_data;
-	img2->buffer = (char *)sm->buff2_data;
-	mlx->screen_buff->addr = sm->buff1_data;
-	mlx->off_buff->addr = sm->buff2_data;
-	ft_memcpy(&sm->buff1, &mlx->buff1, sizeof(t_img));
-	ft_memcpy(&sm->buff2, &mlx->buff2, sizeof(t_img));
-
-	printf("screen_buff data addr ptr : %p\n", mlx->screen_buff->addr);
-}
-*/
 int	main(void)
 {
 	t_mlx	mlx;
@@ -236,49 +182,27 @@ int	main(void)
 
 	frac_print_defines();
 
-	printf("mlx->off_buff : %p\n", mlx.off_buff);
 	sup.mlx = &mlx;
 	sup.frm = frm;
 	sup.multiproc = MULTIPROC_RENDERING;
 	sup.pool = &pool;
-//	set_mlx_buffers_as_shared_memory(&mlx, sup.shmem);
-//	ft_memcpy(&sup.shmem->buff1, &mlx.buff1, sizeof(t_img));
-//	ft_memcpy(&sup.shmem->buff2, &mlx.buff2, sizeof(t_img));
+	
 	sup.shmem->buff1 = mlx.buff1;
 	sup.shmem->buff2 = mlx.buff2;
 	sup.shmem->buff1.addr = sup.shmem->buff1_data;
 	sup.shmem->buff2.addr = sup.shmem->buff2_data;
 
-	printf("buff1  line_len, bytes per pixel: %d x %d\n", mlx.buff1.line_len, mlx.buff1.bytes_per_pxl);
+	printf("buff1 line_len, bytes per pixel: %d x %d\n", mlx.buff1.line_len, mlx.buff1.bytes_per_pxl);
 
 	mlx_key_hook(mlx.win, frac_key_switch, &sup);
 	mlx_mouse_hook(mlx.win, frac_mouse_click, &sup);
 	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &sup);
-	
-	printf("shared mem ptr to buff1_data : %p\n", &sup.shmem->buff1_data);
-	printf("shared mem ptr to buff2_data : %p\n", &sup.shmem->buff2_data);
-	printf("screen_buff->addr ptr : %p\n", mlx.screen_buff->addr);
-	printf("off_buff->addr ptr : %p\n", mlx.off_buff->addr);
 
-	printf("setting shmem buff1_data[0] to \'+\' char\n");
 	sup.shmem->buff1_data[0] = '+';
-	printf("shmem buff1_data[0] after setting : %c\n", sup.shmem->buff1_data[0]);
 
-	printf("mlx buff_size : %zu\n", mlx.buff_size);
-	printf("mlx->screen_buff->line_len : %d\n", mlx.screen_buff->line_len);
-
-	printf("mlx->screen_buff->addr[0] before set bg color : %d\n", mlx.screen_buff->addr[0]);
-	printf("mlx->off_buff->addr[0] before set bg color : %d\n", mlx.off_buff->addr[0]);
 	mlx_set_bg_color(&mlx, 0x000000ff);
-	printf("mlx->screen_buff->addr[0] after set bg color : %d\n", mlx.screen_buff->addr[0]);
-	printf("mlx->off_buff->addr[0] after set bg color : %d\n", mlx.off_buff->addr[0]);
-	printf("mlx buff_size : %zu\n", mlx.buff_size);
-
 	mlx_render_buffer(&mlx);
 	printf("mlx buff_size : %zu\n", mlx.buff_size);
-//	mlx_set_bg_color(&mlx, 0x00008000);
-//	mlx_render_buffer(&mlx);
-//	order_pool_draw(&pool, &frm, &mlx);
 
 	mlx_loop(mlx.conn);
 

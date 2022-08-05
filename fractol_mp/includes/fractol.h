@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/04 20:26:49 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/04 21:16:04 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # define __SCN_WIDTH 1280// CHANGE SCREEN WIDTH HERE
 # define __SCN_HEIGHT 720// CHANGE SCREEN HEIGHT HERE
 
-# define NB_DRAWING_PROCS 8
+# define NB_DRAWING_PROCS 5
 
 //# define SCN_HEIGHT TRGT_SCN_HEIGHT + (TRGT_SCN_HEIGHT % NB_DRAWING_PROCS)
 # define SCN_WIDTH (__SCN_WIDTH + (__SCN_WIDTH % NB_DRAWING_PROCS))
@@ -152,6 +152,7 @@ void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print);
 void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end);
 double	mandelbrot_dist(t_pix *pix, int *iters);
 void	frac_move_frame(t_super *super, double deltaX, double deltaY);
+void	frac_set_frame_pos(t_super *super, double x, double y);
 void	frac_zoom(t_super *super, double increment);
 void	frac_rotate(t_super *sup, double increment);
 void	frac_update(t_super *super);
