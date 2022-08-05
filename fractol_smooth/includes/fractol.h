@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/04 21:42:58 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/04 23:23:29 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,14 @@
 # define INIT_ANGLE 0
 # define ROT_INCREMENT (2 * M_PI / 256)
 
+// CONTINOUS ANIMATION DEFINES
+# define FRAME_RATE 30//FPS
+# define ANIM_UTIME_DELAY (int)(1000000.0f / FRAME_RATE)
+# define SMOOTHNESS 0.1// SMALLER IS SMOOTHEST
+# define MOVE_THREASHOLD 2// IN PIXELS
+# define ZOOM_THREASHOLD 0.05
+# define ROT_THREASHOLD (M_PI / 100)
+
 # define BAILOUT_DIST INT_MAX
 
 # define NBCOLS 7
@@ -69,7 +77,7 @@ typedef struct	s_mandelbrot_frame
 	double	px;
 	double	py;
 	double	ang;
-	int		palette[NBCOLS][3];
+	int		*palette;//[NBCOLS][3];
 //	t_mlx	*mlx;
 }	t_frm;
 
@@ -105,17 +113,26 @@ enum	e_drawing_instructions
 	SIG_DRAW = SIGUSR1
 };
 
+enum	e_manager_instructions
+{
+	SIG_SUCCESS = SIGCONT,
+	SIG_FAILURE = SIGTERM,
+	SIG_UPDATE = SIGUSR1
+};
+
 // extra mem allocation at end of lines + extra line to comply with xserver buffer formating.
 // mem unused if OpenGL used.
 typedef struct	s_shared_mem_mproc_double_buff
 {
 	t_frm	frm;
+	t_frm	cur_frm;
 	int		proc_draw_done[NB_DRAWING_PROCS];
 	t_img	*draw_buff;	//PTR TO ONE OF THE BUFFERS BELOW IN WHICH TO DRAW
 	t_img	buff1;
 	t_img	buff2;
-	char	buff1_data[BUFFER_SIZE];//(SCN_WIDTH + 32) * (SCN_HEIGHT + 4) * sizeof(int)];
-	char	buff2_data[BUFFER_SIZE];//(SCN_WIDTH + 32) * (SCN_HEIGHT + 4) * sizeof(int)];
+	char	buff1_data[BUFFER_SIZE];
+	char	buff2_data[BUFFER_SIZE];
+	int		palette[NBCOLS][3];
 }	t_shmem;
 
 // Process pool data held by main process
@@ -124,25 +141,16 @@ typedef struct	s_process_pool
 	int	pool_status;
 	int	pids[NB_DRAWING_PROCS];
 }	t_pool;
-/*
-// drawing instruction package sent to children
-typedef struct	s_process_pkg
-{
-	int	p_index;
-	int	instruction;//SIG_DRAW, SIG_STOP
-	int	pp[2];
-}	t_ppkg;
-*/
-
 
 // containes all major sub structures for global management
 typedef struct	s_super_struct
 {
 	t_mlx	*mlx;
-	t_pool	*pool;
+//	t_pool	*pool;
 	t_frm	*frm;
 	t_shmem	*shmem;
 	int		multiproc;
+	int		pman_pid;
 }	t_super;
 
 
