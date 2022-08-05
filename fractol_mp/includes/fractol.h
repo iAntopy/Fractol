@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/03 22:25:07 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/04 20:26:49 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,50 +20,47 @@
 # include <signal.h>
 # include <sys/mman.h>
 
-//# include <OpenGL/gl3.h>
-//# include <AppKit/NSOpenGLView.h>
-
-
-
 # include "mlx.h"
 # include "mlxadds.h"
 # include "keycodes.h"
 # include "libft.h"
 
-# define __SCN_WIDTH 640// CHANGE HERE
-# define __SCN_HEIGHT 480// CHANGE HERE
+# define __SCN_WIDTH 1280// CHANGE SCREEN WIDTH HERE
+# define __SCN_HEIGHT 720// CHANGE SCREEN HEIGHT HERE
 
-# define NB_DRAWING_PROCS 2
+# define NB_DRAWING_PROCS 8
 
 //# define SCN_HEIGHT TRGT_SCN_HEIGHT + (TRGT_SCN_HEIGHT % NB_DRAWING_PROCS)
 # define SCN_WIDTH (__SCN_WIDTH + (__SCN_WIDTH % NB_DRAWING_PROCS))
 # define SCN_HEIGHT (__SCN_HEIGHT + (__SCN_HEIGHT % 2))
 # define SCN_MIDX ((double)SCN_WIDTH / 2)
 # define SCN_MIDY ((double)SCN_HEIGHT / 2)
-# define ASP_RATIO ((double)SCN_HEIGHT / SCN_WIDTH)
-# define FRM_WIDTH 4.0f
-# define FRM_HEIGHT ASP_RATIO * FRM_WIDTH//4.0f
+//# define ASP_RATIO ((double)SCN_HEIGHT / SCN_WIDTH)
+//# define FRM_WIDTH 4.0f
+//# define FRM_HEIGHT ASP_RATIO * FRM_WIDTH//4.0f
 # define MAX_ITER 300 
-# define INIT_ZOOM 1.0f
+# define INIT_ZOOM (4.0f / SCN_HEIGHT)
 # define ZOOM_INCREMENT 0.05
 # define INIT_POSX 0.0f
 # define INIT_POSY 0.0f
 # define MOVE_INCREMENT 0.1
+# define INIT_ANGLE 0
+# define ROT_INCREMENT (2 * M_PI / 256)
 
-# define BAILOUT_DIST INT_MAX//(1 << 32)
+# define BAILOUT_DIST INT_MAX
 
 # define NBCOLS 7
 
 //PROCESS DEFINES
 # define DRAWN_Y_RANGE (SCN_HEIGHT / NB_DRAWING_PROCS)
-# define DRAWN_Y_BYTES (SCN_HEIGHT / NB_DRAWING_PROCS)
+//# define DRAWN_Y_BYTES (SCN_HEIGHT / NB_DRAWING_PROCS)
 //# define DRAWN_LAST_Y_RANGE SCN_HEIGHT - ((NB_DRAWING_PROCS - 1) * DRAWN_Y_RANGE)
 
 # define BUFFER_SIZE ((SCN_WIDTH + 32) * (SCN_HEIGHT + 4) * sizeof(int))
 //# define DRAWN_LAST_AREA_NB_BYTES (DRAWN_LAST_Y_RANGE * SCN_WIDTH)
 
 # ifndef MULTIPROC_RENDERING
-#  define MULTIPROC_RENDERING 0
+#  define MULTIPROC_RENDERING 1
 # endif
 
 typedef struct	s_mandelbrot_frame
@@ -71,7 +68,8 @@ typedef struct	s_mandelbrot_frame
 	double	zoom;
 	double	px;
 	double	py;
-	int	palette[NBCOLS][3];
+	double	ang;
+	int		palette[NBCOLS][3];
 //	t_mlx	*mlx;
 }	t_frm;
 
@@ -103,7 +101,7 @@ enum	e_pool_status
 
 enum	e_drawing_instructions
 {
-	SIG_STOP = SIGSTOP,
+	SIG_TERM = SIGTERM,
 	SIG_DRAW = SIGUSR1
 };
 
@@ -155,6 +153,7 @@ void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end);
 double	mandelbrot_dist(t_pix *pix, int *iters);
 void	frac_move_frame(t_super *super, double deltaX, double deltaY);
 void	frac_zoom(t_super *super, double increment);
+void	frac_rotate(t_super *sup, double increment);
 void	frac_update(t_super *super);
 void	frac_update_multiprocessor(t_super *super);
 

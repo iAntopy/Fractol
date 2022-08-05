@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/03 21:54:55 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/04 20:25:20 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,14 @@ static int	__proc_await_draw_order(int idx, t_shmem *sm)
 	
 	while (1)
 	{
-		sigaddset(&sigset, SIG_STOP);
+		sigaddset(&sigset, SIG_TERM);
 		sigaddset(&sigset, SIG_DRAW);
+		printf("process %d waiting for signal like good boy!\n", idx);
 		sigwait(&sigset, &sig);
 		printf("sig received from process %d : %d\n", idx, sig);
-		if (sig == SIG_STOP)
+		if (sig == SIG_TERM)
 		{
-			printf("process %d received SIG_DRAW SIGNAL\n", idx);
+			printf("process %d received SIG_TERM signal.\n", idx);
 			break ;
 		}
 		else if (sig == SIG_DRAW)
@@ -45,6 +46,7 @@ static int	__proc_await_draw_order(int idx, t_shmem *sm)
 		sm->proc_draw_done[idx] = 1;
 		printf("process %d draw status : %d\n", idx, sm->proc_draw_done[idx]);
 	}
+	printf("process %d exiting normally. Purpose achieved\n", idx);
 	exit(0);
 
 /*
@@ -54,7 +56,7 @@ static int	__proc_await_draw_order(int idx, t_shmem *sm)
 	{
 		printf("process %d listening to orders. Good boy\n", idx);
 		read(pp[2], &frm, sizeof(t_frm));
-		if (frm.instruction == SIG_STOP)
+		if (frm.instruction == SIG_TERM)
 		{
 			printf("process %d ordered to close\n", idx);
 			close(pp[1]);
@@ -84,6 +86,7 @@ static int	__proc_await_draw_order(int idx, t_shmem *sm)
 int	order_pool_draw(t_pool *pool, t_shmem *sm) 
 {
 	int	i;
+	ssize_t	dt;
 
 	printf("Main process ordering pool draw\n");
 	i = -1;
@@ -97,13 +100,18 @@ int	order_pool_draw(t_pool *pool, t_shmem *sm)
 	}
 	printf("All orders sent\n");
 	printf("Parent process waiting for children .........\n");
+	dt = 0;
 	i = -1;
-	while (++i < NB_DRAWING_PROCS)
+	ft_deltatime_usec(NULL);
+	while ((++i < NB_DRAWING_PROCS) && (dt < 1000000))
+	{
 		if (sm->proc_draw_done[i] == 0)
 			i = -1;
+		dt += ft_deltatime_usec(NULL);
+	}
+	if (dt >= 1000000)
+		return (close_process_pool(pool, "Timeout reached while waiting for draw completion."));
 	printf("Parent process waiting OVER!\n");
-
-//	mlx_render_buffer(mlx);
 	return (1);
 }
 
@@ -117,17 +125,19 @@ int	frac_error(char *err_msg, int err_code)
 int	force_close_process_pool(t_pool *pool, char *err_msg)
 {
 	int	i;
+	printf("Starting Force pool close procedure\n");
 
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{
 		if (pool->pids[i])
 		{
+			printf("Sending SIGKILL to pid %d\n", pool->pids[i]);
 			kill(pool->pids[i], SIGKILL);
 			printf("Child proc %d with pid %d killed with msg : %s\n", i, pool->pids[i], err_msg);
 		}
 	}
-	return (2);
+	return (-2);
 }
 
 int	close_process_pool(t_pool *pool, char *err_msg)
@@ -137,7 +147,7 @@ int	close_process_pool(t_pool *pool, char *err_msg)
 	i = -1;
 
 /*
-	frm->instruction = SIG_STOP;
+	frm->instruction = SIG_TERM;
 	while (++i < NB_DRAWING_PROCS)
 	{
 		if (pool->wr_pipes[i] >= 0)
@@ -148,12 +158,17 @@ int	close_process_pool(t_pool *pool, char *err_msg)
 	}
 */
 	i = -1;
+	printf("close_pool : closing procedure starting\n");
 	while ((++i < NB_DRAWING_PROCS) && (pool->pids[i] > 0))
 	{
-		kill(pool->pids[i], SIG_STOP);
+		printf("close_pool : Sending SIG_TERM signal to process %d\n", i);
+		kill(pool->pids[i], SIG_TERM);
+		printf("close_pool : Signal sent\n");
 		pool->pids[i] = 0;
 	}
+	printf("close_pool : All signals sent now waiting for children dying. oof.\n");
 	wait(NULL);
+	printf("close_pool : waiting over\n");
 /*
 	while (++i < NB_DRAWING_PROCS)
 	{
@@ -171,7 +186,7 @@ int	close_process_pool(t_pool *pool, char *err_msg)
 */
 	if (err_msg)
 	{
-		printf("closing pipe due to error\n");
+		printf("Closing process pool due to error : \n");
 		pool->pool_status = STATUS_BROKEN;
 		return (frac_error(err_msg, -1));
 	}

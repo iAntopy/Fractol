@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/03 21:48:20 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/04 20:31:57 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,29 @@
 
 void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print)
 {
+	double	cos_ang;
+	double	sin_ang;
+	double	fx;
+	double	fy;
+
 	if (print)
 	{
 		printf("converting starts :\n");
 		printf("zoom %f, sx %i, sy %i\n", frm->zoom, pix->sx, pix->sy);
 	}
-	pix->fx = frm->zoom * FRM_WIDTH * ((pix->sx - SCN_MIDX) / SCN_WIDTH) + frm->px;
-	pix->fy = frm->zoom * FRM_HEIGHT * ((pix->sy - SCN_MIDY) / SCN_HEIGHT) + frm->py;
+
+	cos_ang = cos(frm->ang);
+	sin_ang = sin(frm->ang);
+	fx = pix->sx - SCN_MIDX;
+	fy = pix->sy - SCN_MIDY;
+/*
+	pix->fx = frm->zoom * FRM_WIDTH * (fx / SCN_WIDTH) + frm->px;
+	pix->fy = frm->zoom * FRM_HEIGHT * (fy / SCN_HEIGHT) + frm->py;
+*/
+//	pix->fx = frm->zoom * FRM_WIDTH * ((pix->sx - SCN_MIDX) / SCN_WIDTH) + frm->px;
+//	pix->fy = frm->zoom * FRM_HEIGHT * ((pix->sy - SCN_MIDY) / SCN_HEIGHT) + frm->py;
+	pix->fx = frm->zoom * (cos_ang * fx + sin_ang * fy) + frm->px;
+	pix->fy = frm->zoom * (-sin_ang * fx + cos_ang * fy) + frm->py;
 	if (print)
 		printf("converted coords : x %f, y %f\n", pix->fx, pix->fy);
 }
@@ -103,7 +119,7 @@ double	mandelbrot_dist(t_pix *pix, int *iters)
 //	double		im;
 
 //	printf("mandelbrot dist Starts \n");
-	z = -1;
+	z = 0;// constant starting value determines which julia set you get
 	c = pix->fx + (pix->fy * I);
 	i = -1;
 	while (++i < MAX_ITER && hypot(creal(z), cimag(z)) < BAILOUT_DIST)
@@ -136,7 +152,7 @@ void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end)
 	printf("process %d init y : %d\n", getpid(), y);
 	while (++y < y_end)
 	{
-		printf("process %d drawing line %d\n", getpid(), y);
+//		printf("process %d drawing line %d\n", getpid(), y);
 		x = -1;
 		while (++x < SCN_WIDTH)
 		{
