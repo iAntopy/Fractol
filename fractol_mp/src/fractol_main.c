@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/04 21:35:30 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/06 13:45:31 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,8 +136,6 @@ int	frac_key_switch(int keycode, t_super *super)
 		frac_rotate(super, -ROT_INCREMENT);
 	else if (keycode == KC_Backspace)
 		super->multiproc = !super->multiproc;
-	else if (keycode == KC_P)
-		frac_update_multiprocessor(super);
 	return (0);
 }
 
@@ -152,10 +150,11 @@ void	frac_print_defines(void)
 
 int	main(void)
 {
-	t_mlx	mlx;
 	t_pool	pool;
 	t_super	sup;
 	t_frm	*frm;
+	t_mlx	mlx;
+
 
 	sup.shmem = mmap(NULL, sizeof(t_shmem) + sysconf(_SC_PAGE_SIZE) - (sizeof(t_shmem) % sysconf(_SC_PAGE_SIZE)), 
 		PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -166,10 +165,11 @@ int	main(void)
 	printf("aligning sizeof shmem : %zu, pagesize : %zu\n", sizeof(t_shmem) % sysconf(_SC_PAGE_SIZE), sysconf(_SC_PAGE_SIZE));
 	
 	frm = &sup.shmem->frm;
+	frm->pal = &sup.shmem->pal;
 	frm->zoom = INIT_ZOOM;
 	frm->px = INIT_POSX;
 	frm->py = INIT_POSY;
-	init_base_color_palette(frm);
+	init_base_color_palette(frm->pal, PALETTE_MIAMI);
 
 	if (init_process_pool(&pool, sup.shmem) < 0 || (pool.pool_status != STATUS_RUNNING))
 	{
@@ -179,12 +179,14 @@ int	main(void)
 
 	mlx_init_double_buff_window(&mlx, SCN_WIDTH, SCN_HEIGHT, "Fractol");
 	printf("MLX started\n");
+	printf("buff1.line_len : %d\n", mlx.buff1.line_len);
+	printf("buff2.line_len : %d\n", mlx.buff2.line_len);
+	printf("mlx.buffer_size : %zu\n", mlx.buff_size);
+	
 
 	frac_print_defines();
 
-	sup.mlx = &mlx;
 	sup.frm = frm;
-	sup.multiproc = MULTIPROC_RENDERING;
 	sup.pool = &pool;
 	
 	sup.shmem->buff1 = mlx.buff1;
@@ -198,11 +200,8 @@ int	main(void)
 	mlx_mouse_hook(mlx.win, frac_mouse_click, &sup);
 	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &sup);
 
-	sup.shmem->buff1_data[0] = '+';
-
 	mlx_set_bg_color(&mlx, 0x000000ff);
 	mlx_render_buffer(&mlx);
-	printf("mlx buff_size : %zu\n", mlx.buff_size);
 
 	mlx_loop(mlx.conn);
 

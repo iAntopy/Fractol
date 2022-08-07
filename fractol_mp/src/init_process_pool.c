@@ -6,15 +6,15 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/04 20:25:20 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/05 00:39:39 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fractol.h>
+#include "fractol.h"
 #include <unistd.h>
-#include <fcntl.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/wait.h>
 
 static int	__proc_await_draw_order(int idx, t_shmem *sm)
 {

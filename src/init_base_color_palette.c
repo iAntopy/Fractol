@@ -6,48 +6,103 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 21:13:22 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/25 00:32:34 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/07 02:49:39 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-t_frm	*init_base_color_palette(t_frm *frm)
+void	init_palette_miami(t_pal *pal)
 {
-//	frm->palette[0] = 0x002161ff;
-//	frm->palette[1] = 0x00db21ff;
-///	frm->palette[2] = 0x00ff2124;
-//	frm->palette[3] = 0x00ffe321;
-//	frm->palette[4] = 0x00b2ff21;
-//	frm->palette[5] = 0x00ffffff;
-	frm->palette[0][0] = 0x00;
-	frm->palette[0][1] = 0x00;
-	frm->palette[0][2] = 0x00;
-	
-	frm->palette[1][0] = 0x21;
-	frm->palette[1][1] = 0x61;
-	frm->palette[1][2] = 0xff;
-
-	frm->palette[2][0] = 0xdb;
-	frm->palette[2][1] = 0x21;
-	frm->palette[2][2] = 0xff;
-
-	frm->palette[3][0] = 0xff;
-	frm->palette[3][1] = 0x21;
-	frm->palette[3][2] = 0x24;
-
-	frm->palette[4][0] = 0xff;
-	frm->palette[4][1] = 0xe3;
-	frm->palette[4][2] = 0x21;
-
-	frm->palette[5][0] = 0xb2;
-	frm->palette[5][1] = 0xff;
-	frm->palette[5][2] = 0x21;
-
-	frm->palette[6][0] = 0xff;
-	frm->palette[6][1] = 0xff;
-	frm->palette[6][2] = 0xff;
-	printf("Corner color in init base palette : r %d, g %d, b %d\n", frm->palette[0][0], frm->palette[0][1], frm->palette[0][2]);
-	printf("Second colot in init base palette : r %d, g %d, b %d\n", frm->palette[1][0], frm->palette[1][1], frm->palette[1][2]);
-	return (frm);
+	pal->nb_cols = 7;
+	pal->pal_code = PALETTE_MIAMI;
+	pal->palette[0][0] = 0x00;
+	pal->palette[0][1] = 0x00;
+	pal->palette[0][2] = 0x00;
+	pal->palette[1][0] = 0x21;
+	pal->palette[1][1] = 0x61;
+	pal->palette[1][2] = 0xff;
+	pal->palette[2][0] = 0xdb;
+	pal->palette[2][1] = 0x21;
+	pal->palette[2][2] = 0xff;
+	pal->palette[3][0] = 0xff;
+	pal->palette[3][1] = 0x21;
+	pal->palette[3][2] = 0x24;
+	pal->palette[4][0] = 0xff;
+	pal->palette[4][1] = 0xe3;
+	pal->palette[4][2] = 0x21;
+	pal->palette[5][0] = 0xb2;
+	pal->palette[5][1] = 0xff;
+	pal->palette[5][2] = 0x21;
+	pal->palette[6][0] = 0xff;
+	pal->palette[6][1] = 0xff;
+	pal->palette[6][2] = 0xff;
+	printf("Miami color palette engaged !\n");
 }
+
+void	init_palette_monochrome(t_pal *pal)
+{
+	pal->nb_cols = 2;
+	pal->pal_code = PALETTE_MONOCHROME;
+	pal->palette[0][0] = 0x00;
+	pal->palette[0][1] = 0x00;
+	pal->palette[0][2] = 0x00;
+	pal->palette[1][0] = 0xff;
+	pal->palette[1][1] = 0xff;
+	pal->palette[1][2] = 0xff;
+	printf("Monochrome color palette engaged !\n");
+}
+
+void	init_palette_orange(t_pal *pal)
+{
+	pal->nb_cols = 4;
+	pal->pal_code = PALETTE_ORANGE;
+	pal->palette[0][0] = 0x00;
+	pal->palette[0][1] = 0x00;
+	pal->palette[0][2] = 0x00;
+	pal->palette[1][0] = 0xd9;
+	pal->palette[1][1] = 0x25;
+	pal->palette[1][2] = 0x00;
+	pal->palette[2][0] = 0xff;
+	pal->palette[2][1] = 0x90;
+	pal->palette[2][2] = 0x25;
+	pal->palette[3][0] = 0xff;
+	pal->palette[3][1] = 0xff;
+	pal->palette[3][2] = 0xff;
+	printf("Orange color palette engaged !\n");
+}
+
+void	init_palette_green(t_pal *pal)
+{
+	pal->nb_cols = 4;
+	pal->pal_code = PALETTE_GREEN;
+	pal->palette[0][0] = 0x00;
+	pal->palette[0][1] = 0x00;
+	pal->palette[0][2] = 0x00;
+	pal->palette[1][0] = 0x15;
+	pal->palette[1][1] = 0xdb;
+	pal->palette[1][2] = 0x15;
+	pal->palette[2][0] = 0x2e;
+	pal->palette[2][1] = 0xff;
+	pal->palette[2][2] = 0x6d;
+	pal->palette[3][0] = 0xff;
+	pal->palette[3][1] = 0xff;
+	pal->palette[3][2] = 0xff;
+	printf("Green color palette engaged !\n");
+}
+
+void	init_base_color_palette(t_pal *pal, int pal_code)
+{
+	if (pal_code == PALETTE_MIAMI)
+		init_palette_miami(pal);
+	else if (pal_code == PALETTE_MONOCHROME)
+		init_palette_monochrome(pal);
+	else if (pal_code == PALETTE_ORANGE)
+		init_palette_orange(pal);
+	else if (pal_code == PALETTE_GREEN)
+		init_palette_green(pal);
+	else
+		fperror("Invalid palette code");
+}
+
+

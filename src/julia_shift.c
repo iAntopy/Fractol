@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe_utils.c                                       :+:      :+:    :+:   */
+/*   julia_shift.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/07/27 02:52:11 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/27 15:47:13 by iamongeo         ###   ########.fr       */
+/*   Created: 2022/08/06 18:33:45 by iamongeo          #+#    #+#             */
+/*   Updated: 2022/08/07 01:08:50 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-#include <stdarg.h>
 
-void	close_fd_ptr_list(int nb_fds, ...)
+void	frac_shift_julia(t_super *sup, double real, double imag)
 {
-	va_list	ap;
-	int	*fd;
-
-	va_start(ap, nb_fds);
-	while (nb_fds--)
-	{
-		fd = va_arg(ap, int *);
-		close(*fd);
-		*fd = -1;
-	}
-	va_end(ap);
+	sup->frm->cx += real;
+	sup->frm->cy += imag;
+	frac_update(sup);
 }

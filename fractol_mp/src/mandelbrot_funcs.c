@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/04 21:02:00 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/06 13:49:15 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int prin
 //		printf("\niters %d, i_iters %d, norm_iters %f \n", iters, i_iters, norm_iters);
 //		printf("dist %f, dist ratio %f\n", dist, dist_ratio);
 //	}
-	pcols[0] = pix->palette + (i_iters * 3);
+	pcols[0] = pix->pal->palette + (i_iters * 3);
 	pcols[1] = pcols[0] + 3;
 	colors[0] = (int)(pcols[0][0] + (pcols[1][0] - pcols[0][0]) * interpolation);
 	colors[1] = (int)(pcols[0][1] + (pcols[1][1] - pcols[0][1]) * interpolation);
@@ -148,7 +148,7 @@ void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end)
 	printf("pid %d y_start, y_end, y_range : %d, %d, %d\n", getpid(), y_start, y_end, y_end - y_start);
 //	pix.palette = (int *)frm->palette;
 //	printf("Corner color in frame : r %d g %d b %d \n", frm->palette[0][0], frm->palette[0][1], frm->palette[0][2]);
-	
+	pix.palette = frm->palette;	
 	y = y_start - 1;
 	printf("process %d init y : %d\n", getpid(), y);
 	while (++y < (y_end - 5))
@@ -177,7 +177,6 @@ void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end)
 //			}
 			if (iters < MAX_ITER)
 			{
-				pix.palette = (int *)frm->palette;
 				color = get_mandelbrot_pix_color(&pix, dist, iters, (!y && !x));
 				if ((y == y_start) && !x)
 					printf("pid %d put color %d to buffer. Putting pixel to buffer\n", getpid(), color);

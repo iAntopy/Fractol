@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/04 21:42:58 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/07 15:55:39 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 # include "keycodes.h"
 # include "libft.h"
 
-# define __SCN_WIDTH 1280// CHANGE SCREEN WIDTH HERE
-# define __SCN_HEIGHT 720// CHANGE SCREEN HEIGHT HERE
+# define __SCN_WIDTH 640// CHANGE SCREEN WIDTH HERE
+# define __SCN_HEIGHT 480// CHANGE SCREEN HEIGHT HERE
 
 # define NB_DRAWING_PROCS 5
 
@@ -63,13 +63,19 @@
 #  define MULTIPROC_RENDERING 1
 # endif
 
+typedef struct	s_palette
+{
+	int	nb_cols;
+	int	palette[10][3];
+}	t_pal;
+
 typedef struct	s_mandelbrot_frame
 {
 	double	zoom;
 	double	px;
 	double	py;
 	double	ang;
-	int		palette[NBCOLS][3];
+	t_pal	*pal;
 //	t_mlx	*mlx;
 }	t_frm;
 
@@ -80,7 +86,7 @@ typedef struct	s_pixel
 	double		fx;
 	double		fy;
 	double complex	z;
-	int		*palette;
+	t_pal		*pal;
 }	t_pix;
 
 enum	e_process_status
@@ -105,6 +111,12 @@ enum	e_drawing_instructions
 	SIG_DRAW = SIGUSR1
 };
 
+enum	e_palette_codes
+{
+	PALETTE_MIAMI,
+	PALETTE_MONOCHROME
+};
+
 // extra mem allocation at end of lines + extra line to comply with xserver buffer formating.
 // mem unused if OpenGL used.
 typedef struct	s_shared_mem_mproc_double_buff
@@ -116,6 +128,7 @@ typedef struct	s_shared_mem_mproc_double_buff
 	t_img	buff2;
 	char	buff1_data[BUFFER_SIZE];//(SCN_WIDTH + 32) * (SCN_HEIGHT + 4) * sizeof(int)];
 	char	buff2_data[BUFFER_SIZE];//(SCN_WIDTH + 32) * (SCN_HEIGHT + 4) * sizeof(int)];
+	t_pal	pal;
 }	t_shmem;
 
 // Process pool data held by main process
@@ -154,9 +167,11 @@ double	mandelbrot_dist(t_pix *pix, int *iters);
 void	frac_move_frame(t_super *super, double deltaX, double deltaY);
 void	frac_set_frame_pos(t_super *super, double x, double y);
 void	frac_zoom(t_super *super, double increment);
+void	frac_dir_zoom(t_super *super, double x, double y, double increment);
+void	frac_reset(t_super *super);
 void	frac_rotate(t_super *sup, double increment);
 void	frac_update(t_super *super);
-//void	frac_update_multiprocessor(t_super *super);
+void	frac_update_multiprocessor(t_super *super);
 
 t_frm	*init_base_color_palette(t_frm *frm);
 
@@ -166,5 +181,4 @@ int	close_process_pool(t_pool *pool, char *err_msg);
 int	force_close_process_pool(t_pool *pool, char *err_msg);
 int	order_pool_draw(t_pool *pool, t_shmem *sm);//t_frm *frm, t_mlx *mlx);
 
-void	close_fd_ptr_list(int nb_fds, ...);
 #endif

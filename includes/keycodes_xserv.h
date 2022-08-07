@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/23 02:59:48 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/27 23:48:10 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/05 00:41:16 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,9 @@ enum xserver_keycodes
 	KC_KP_Delete                   =  0xff9f,
 	KC_KP_Equal                    =  0xffbd,  /* Equals */
 	KC_KP_Multiply                 =  0xffaa,
-	KC_KP_Add                      =  0xffab,
+	KC_KP_Plus                      =  0xffab,
 	KC_KP_Separator                =  0xffac,  /* Separator, often comma */
-	KC_KP_Subtract                 =  0xffad,
+	KC_KP_Minus                 =  0xffad,
 	KC_KP_Decimal                  =  0xffae,
 	KC_KP_Divide                   =  0xffaf,
 

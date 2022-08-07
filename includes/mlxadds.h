@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 17:32:17 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/07/25 21:50:55 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/04 16:33:04 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,10 @@ typedef struct	s_mlx_data
 {
 	void	*conn;
 	void	*win;
-	int	width;
-	int	height;
+	int		width;
+	int		height;
+	size_t	nb_pix;
+	size_t	buff_size;
 	t_img	*screen_buff;
 	t_img	*off_buff;
 	t_img	buff1;
