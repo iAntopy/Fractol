@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/05 00:39:39 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/08 23:30:08 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	__proc_await_draw_order(int idx, t_shmem *sm)
 		sigaddset(&sigset, SIG_DRAW);
 		printf("process %d waiting for signal like good boy!\n", idx);
 		sigwait(&sigset, &sig);
-		printf("sig received from process %d : %d\n", idx, sig);
+//		printf("sig received from process %d : %d\n", idx, sig);
 		if (sig == SIG_TERM)
 		{
 			printf("process %d received SIG_TERM signal.\n", idx);
@@ -39,14 +39,14 @@ static int	__proc_await_draw_order(int idx, t_shmem *sm)
 		}
 		else if (sig == SIG_DRAW)
 		{
-			printf("process %d received SIG_DRAW signal\n", idx);
+//			printf("process %d received SIG_DRAW signal\n", idx);
 			draw_mandelbrot(sm->draw_buff, &sm->frm, y_offset, y_offset + DRAWN_Y_RANGE);
-			printf("process %d draw mandelbrot DONE\n", idx);
+//			printf("process %d draw mandelbrot DONE\n", idx);
 		}
 		sm->proc_draw_done[idx] = 1;
-		printf("process %d draw status : %d\n", idx, sm->proc_draw_done[idx]);
+//		printf("process %d draw status : %d\n", idx, sm->proc_draw_done[idx]);
 	}
-	printf("process %d exiting normally. Purpose achieved\n", idx);
+//	printf("process %d exiting normally. Purpose achieved\n", idx);
 	exit(0);
 
 /*
@@ -92,11 +92,11 @@ int	order_pool_draw(t_pool *pool, t_shmem *sm)
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{
-		printf("process %d draw order sending \n", i);
+//		printf("process %d draw order sending \n", i);
 		sm->proc_draw_done[i] = 0;
-		printf("process %d draw done set to false\n", i);
+//		printf("process %d draw done set to false\n", i);
 		kill(pool->pids[i], SIG_DRAW);
-		printf("process %d draw order sent \n", i);
+//		printf("process %d draw order sent \n", i);
 	}
 	printf("All orders sent\n");
 	printf("Parent process waiting for children .........\n");
@@ -111,7 +111,7 @@ int	order_pool_draw(t_pool *pool, t_shmem *sm)
 	}
 	if (dt >= 1000000)
 		return (close_process_pool(pool, "Timeout reached while waiting for draw completion."));
-	printf("Parent process waiting OVER!\n");
+//	printf("Parent process waiting OVER!\n");
 	return (1);
 }
 
@@ -125,8 +125,8 @@ int	frac_error(char *err_msg, int err_code)
 int	force_close_process_pool(t_pool *pool, char *err_msg)
 {
 	int	i;
-	printf("Starting Force pool close procedure\n");
 
+	printf("Starting Force pool close procedure\n");
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{

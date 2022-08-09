@@ -6,12 +6,13 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/07 02:03:36 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/08 21:07:02 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
+/*
 void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print)
 {
 	double	cos_ang;
@@ -35,19 +36,24 @@ void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print)
 //	if (print)
 //		printf("converted coords : x %f, y %f\n", pix->fx, pix->fy);
 }
-
+*/
 /*
-void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print)
+void	convert_vect_to_frame(t_frm *frm, t_pix *pix)
 {
-	if (print)
-	{
-		printf("converting starts :\n");
-		printf("zoom %f, sx %i, sy %i\n", frm->zoom, pix->sx, pix->sy);
-	}
-	pix->fx = frm->zoom * FRM_WIDTH * ((pix->sx - SCN_MIDX) / SCN_WIDTH) + frm->px;
-	pix->fy = frm->zoom * FRM_HEIGHT * ((pix->sy - SCN_MIDY) / SCN_HEIGHT) + frm->py;
-	if (print)
-		printf("converted coords : x %f, y %f\n", pix->fx, pix->fy);
+	double	cos_ang;
+	double	sin_ang;
+	double	fx;
+	double	fy;
+
+	cos_ang = cos(frm->ang);
+	sin_ang = sin(frm->ang);
+	printf("cos_ang, sin_ang : %f, %f\n", cos_ang, sin_ang);
+	fx = pix->sx;
+	fy = pix->sy;
+	printf("sx, sy : %f, %f\n", fx, fy);
+	pix->fx = frm->zoom * (cos_ang * fx + sin_ang * fy);
+	pix->fy = frm->zoom * (-sin_ang * fx + cos_ang * fy);
+	printf("convert vect : fx, fy :  (%f, %f)\n", pix->fx, pix->fy);
 }
 */
 static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int print)
@@ -65,7 +71,7 @@ static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int prin
 	
 //	ratio = 2 / (1 + exp(-0.01 * (1 / (dist - 2)))) + 1;
 //	ratio = 2 / (1 + exp(-0.1 * (1 / (dist - 2)))) + 1;
-	norm_iters = (pix->nb_cols - 1) * ((double)iters - log(log(dist) / log(BAILOUT_DIST))) / MAX_ITER;//log(BAILOUT_DIST));
+	norm_iters = (pix->nb_cols - 1) * ((double)iters - log(log(dist) / 10)) / MAX_ITER;
 //	ratio = norm_iters / MAX_ITER;
 	iters = (int)norm_iters;
 	interpolation = norm_iters - iters;
@@ -124,116 +130,12 @@ static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int prin
 //	mlx_buff_put_pixel(buff, pix->sx + 1, pix->sy + 1, color);
 }
 
-t_pix	*burning_ship_dist(t_pix *pix)
-{
-	int		i;
-	double		zx;
-	double		zy;
-	double		sqx;
-	double		sqy;
-
-	zx = 0;
-	zy = 0;
-	sqx = 0;
-	sqy = 0;
-	i = -1;
-	while (++i < MAX_ITER && (sqx + sqy) < BAILOUT_DIST)
-	{
-		zy = fabs(zx * zy);
-		zy += zy + pix->fy;
-//		zy = 2 * abs(zx * zy) - pix->fy;
-		zx = sqx - sqy - pix->fx;
-		sqx = zx * zx;
-		sqy = zy * zy;
-	}
-	pix->z = zx + zy * I;
-	pix->iters = i;
-	pix->dist = sqx + sqy;
-	return (pix);
-}
-
-t_pix	*mandelbrot_dist(t_pix *pix)
-{
-	int		i;
-	double		zx;
-	double		zy;
-	double		sqx;
-	double		sqy;
-
-	zx = 0;
-	zy = 0;
-	sqx = 0;
-	sqy = 0;
-	i = -1;
-	while (++i < MAX_ITER && (sqx + sqy) < BAILOUT_DIST)
-	{
-		sqx = zx * zx;
-		sqy = zy * zy;
-		zy = zx * zy;
-		zy += zy - pix->fy;
-		zx = sqx - sqy + pix->fx;
-	}
-	pix->z = zx + zy * I;
-	pix->iters = i;
-	pix->dist = sqx + sqy;
-	return (pix);
-}
-
-t_pix	*julia_dist(t_pix *pix)
-{
-	int		i;
-	double		zx;
-	double		zy;
-	double		sqx;
-	double		sqy;
-
-	zx = pix->fx;
-	zy = pix->fy;
-	sqx = zx * zx;
-	sqy = zy * zy;
-	i = -1;
-	while (++i < MAX_ITER && (sqx + sqy) < BAILOUT_DIST)
-	{
-		zy = zx * zy;
-		zy += zy - pix->cy;
-		zx = sqx - sqy + pix->cx;
-		sqx = zx * zx;
-		sqy = zy * zy;
-	}
-	pix->z = zx + zy * I;
-	pix->iters = i;
-	pix->dist = sqx + sqy;
-	return (pix);
-}
-/*
-t_pix	*julia_dist(t_pix *pix, double complex c)
-{
-	int		i;
-	double complex	z;
-	double		dist;
-
-//	printf("mandelbrot dist Starts \n");
-	z = pix->fx + (pix->fy * I);
-	dist = 0;
-	i = -1;
-	while (++i < MAX_ITER && dist < BAILOUT_DIST)
-	{
-		z = (z * z) + c;
-		dist = cabs(z);
-	}
-	pix->z = z;
-	pix->iters = i;
-	pix->dist = dist;
-	return (pix);
-}
-*/
-
 void	draw_mandelbrot(t_img *buff, t_frm *frm)
 {
 	t_pix	pix;
-	int	x;
-	int	y;
-	int	color;
+	int		x;
+	int		y;
+	int		color;
 
 	pix.cx = frm->cx;
 	pix.cy = frm->cy;

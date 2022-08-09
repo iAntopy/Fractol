@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 16:04:35 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/08 19:39:17 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/08 19:43:15 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ static void	frac_control_events_switch(int keycode, t_super *sup)
 		frac_shift_julia(sup, -JULIA_INCREMENT, 0);
 	else if (keycode == KC_Right)
 		frac_shift_julia(sup, JULIA_INCREMENT, 0);
-	else
-		printf("\n\nKEY %d HAS NO BINDING !\n", keycode);
 }
 
 int	frac_key_switch(int keycode, t_super *sup)

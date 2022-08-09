@@ -6,12 +6,13 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/06 13:49:15 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/08 23:33:59 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
+/*
 void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print)
 {
 	double	cos_ang;
@@ -30,10 +31,8 @@ void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print)
 	sin_ang = sin(frm->ang);
 	fx = pix->sx - SCN_MIDX;
 	fy = pix->sy - SCN_MIDY;
-/*
 	pix->fx = frm->zoom * FRM_WIDTH * (fx / SCN_WIDTH) + frm->px;
 	pix->fy = frm->zoom * FRM_HEIGHT * (fy / SCN_HEIGHT) + frm->py;
-*/
 //	pix->fx = frm->zoom * FRM_WIDTH * ((pix->sx - SCN_MIDX) / SCN_WIDTH) + frm->px;
 //	pix->fy = frm->zoom * FRM_HEIGHT * ((pix->sy - SCN_MIDY) / SCN_HEIGHT) + frm->py;
 	pix->fx = frm->zoom * (cos_ang * fx + sin_ang * fy) + frm->px;
@@ -41,8 +40,9 @@ void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print)
 //	if (print)
 //		printf("converted coords : x %f, y %f\n", pix->fx, pix->fy);
 }
+*/
 
-static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int print)
+static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters)//, int print)
 {
 	int	*pcols[2];
 	int	colors[3];
@@ -57,7 +57,7 @@ static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int prin
 	
 //	ratio = 2 / (1 + exp(-0.01 * (1 / (dist - 2)))) + 1;
 //	ratio = 2 / (1 + exp(-0.1 * (1 / (dist - 2)))) + 1;
-	norm_iters = (NBCOLS - 1) * ((double)iters - log(log(dist) / 100)) / MAX_ITER;//log(BAILOUT_DIST));
+	norm_iters = (pix->nb_cols - 1) * ((double)iters - log(log(dist) / 10)) / MAX_ITER;//log(BAILOUT_DIST));
 //	ratio = norm_iters / MAX_ITER;
 	i_iters = (int)norm_iters;
 	interpolation = norm_iters - i_iters;
@@ -73,18 +73,18 @@ static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int prin
 //		printf("\niters %d, i_iters %d, norm_iters %f \n", iters, i_iters, norm_iters);
 //		printf("dist %f, dist ratio %f\n", dist, dist_ratio);
 //	}
-	pcols[0] = pix->pal->palette + (i_iters * 3);
+	pcols[0] = pix->palette + (i_iters * 3);
 	pcols[1] = pcols[0] + 3;
 	colors[0] = (int)(pcols[0][0] + (pcols[1][0] - pcols[0][0]) * interpolation);
 	colors[1] = (int)(pcols[0][1] + (pcols[1][1] - pcols[0][1]) * interpolation);
 	colors[2] = (int)(pcols[0][2] + (pcols[1][2] - pcols[0][2]) * interpolation);
 	color = (colors[0] << 16) | (colors[1] << 8) | colors[2];
-	if (print)
-	{
-		printf("palette color 1 : r %d, g %d b %d\n", pcols[0][0], pcols[0][1], pcols[0][2]);
-		printf("palette color 2 : r %d, g %d b %d\n\n", pcols[1][0], pcols[1][1], pcols[1][2]);
-		printf("color : r %d g%d b %d\n", (color & 0xff0000) >> 16, (color & 0xff00) >> 8, color & 0xff);
-	}
+//	if (print)
+//	{
+//		printf("palette color 1 : r %d, g %d b %d\n", pcols[0][0], pcols[0][1], pcols[0][2]);
+//		printf("palette color 2 : r %d, g %d b %d\n\n", pcols[1][0], pcols[1][1], pcols[1][2]);
+//		printf("color : r %d g%d b %d\n", (color & 0xff0000) >> 16, (color & 0xff00) >> 8, color & 0xff);
+//	}
 //	color += palette_cols[0][1] << 8;
 //	color += palette_cols[0][2];
 
@@ -102,14 +102,10 @@ static int	get_mandelbrot_pix_color(t_pix *pix, double dist, int iters, int prin
 //	color = (color * 0x100) + ft_clamp((0xff * blue_ratio), 0, 0xff);
 //	printf("(sx, sy), (fx, fy), dist, col : (%d, %d), (%f, %f), %f, %d\n", pix->sx, pix->sy, pix->fx, pix->fy, dist, color);
 
-
 	return (color);
-//	mlx_buff_put_pixel(buff, pix->sx, pix->sy, color);
-//	mlx_buff_put_pixel(buff, pix->sx + 1, pix->sy, color);
-//	mlx_buff_put_pixel(buff, pix->sx, pix->sy + 1, color);
-//	mlx_buff_put_pixel(buff, pix->sx + 1, pix->sy + 1, color);
 }
 
+/*
 // Returns dist after 100 iterations
 double	mandelbrot_dist(t_pix *pix, int *iters)
 {
@@ -133,25 +129,25 @@ double	mandelbrot_dist(t_pix *pix, int *iters)
 	*iters = i;
 	return (hypot(creal(z), cimag(z)));
 }
+*/
 
-//void	draw_mandelbrot(t_mlx *mlx, t_frm *frm, int y_range[2], void (*draw_func)())
 void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end)
 {
 	t_pix	pix;
 	int		x;
 	int		y;
-	double	dist;
-	int	iters;
 	int		color;
-	
-	printf("pid %d draw_mandelbrot starts\n", getpid());
-	printf("pid %d y_start, y_end, y_range : %d, %d, %d\n", getpid(), y_start, y_end, y_end - y_start);
-//	pix.palette = (int *)frm->palette;
-//	printf("Corner color in frame : r %d g %d b %d \n", frm->palette[0][0], frm->palette[0][1], frm->palette[0][2]);
-	pix.palette = frm->palette;	
+
+	pix.cx = frm->cx;
+	pix.cy = frm->cy;
+	pix.nb_cols = frm->pal.nb_cols;
+	pix.palette = (int *)frm->pal.palette;
+//	printf("pid %d draw_mandelbrot starts\n", getpid());
+//	printf("pid %d y_start, y_end, y_range : %d, %d, %d\n", getpid(), y_start, y_end, y_end - y_start);
+
 	y = y_start - 1;
-	printf("process %d init y : %d\n", getpid(), y);
-	while (++y < (y_end - 5))
+//	printf("process %d init y : %d\n", getpid(), y);
+	while (++y < y_end)//(y_end - 5))
 	{
 //		printf("process %d drawing line %d\n", getpid(), y);
 		x = -1;
@@ -159,10 +155,11 @@ void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end)
 		{
 			pix.sx = x;
 			pix.sy = y;
-			convert_pix_to_frame(frm, &pix, (!y && !x));
-			dist = mandelbrot_dist(&pix, &iters);
-			if ((y == y_start) && !x)
-				printf("pid %d found dist %f\n", getpid(), dist);
+			convert_pix_to_frame(frm, &pix);//, (!y && !x));
+			frm->dist_func(&pix);
+//			dist = mandelbrot_dist(&pix);
+//			if ((y == y_start) && !x)
+//				printf("pid %d found dist %f, iters : %d\n", getpid(), pix.dist, pix.iters);
 
 //			if ((45 < y && y < 55) && (45 < x && x < 55))
 //			{
@@ -175,26 +172,26 @@ void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end)
 //				printf("drawing pix at (x, y) : (%d, %d),  dist : %f\n", x, y, dist);
 //				printf("converted pix to frame : (%f, %f)\n", pix.fx, pix.fy);
 //			}
-			if (iters < MAX_ITER)
+			if ((pix.dist > 2) && (pix.iters < MAX_ITER))
 			{
-				color = get_mandelbrot_pix_color(&pix, dist, iters, (!y && !x));
-				if ((y == y_start) && !x)
-					printf("pid %d put color %d to buffer. Putting pixel to buffer\n", getpid(), color);
+				color = get_mandelbrot_pix_color(&pix, pix.dist, pix.iters);//, (!y && !x));
+//				if ((y == y_start) && !x)
+//					printf("pid %d put color %d to buffer. Putting pixel to buffer\n", getpid(), color);
 
 				mlx_buff_put_pixel(buff, x, y, color);
-				if ((y == y_start) && !x)
-					printf("pid %d put pixel to buffer\n", getpid());
+//				if ((y == y_start) && !x)
+//					printf("pid %d put pixel to buffer\n", getpid());
 //				mlx_buff_put_pixel(buff, x + 1, y, color);
 //				mlx_buff_put_pixel(buff, x, y + 1, color);
 //				mlx_buff_put_pixel(buff, x + 1, y + 1, color);
 //				mlx_buff_put_pixel
 //				arr[(y - y_start) * SCN_WIDTH + x] = color;
 			}
-			else if ((y == y_start) && !x)
-				printf("process %d distance not big enough to impress\n", getpid());
+//			else if ((y == y_start) && !x)
+//				printf("process %d distance not big enough to impress\n", getpid());
 //			x += 2;
 		}
 //		y += 2;
 	}
-	printf("pid %d draw_mandelbrot complet\n", getpid());
+//	printf("pid %d draw_mandelbrot complet\n", getpid());
 }

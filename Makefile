@@ -12,12 +12,10 @@ LIBS		=  $(LIBS_DIR)libft.a $(LIBS_DIR)libmlxadds.a $(LIBS_DIR)libmlx.a
 
 CC		= gcc
 
-CFLAGS		= -Wall -Wextra -Werror -O2 -lm
-
-FRAMEWORKS	= 
+CFLAGS		= -Wall -Wextra -Werror -O2
 
 ifeq ($(shell uname -s), Linux)
-	FRAMEWORKS	= -lX11 -lXext
+	FRAMEWORKS	= -lm -lX11 -lXext
 endif
 ifeq ($(shell uname -s), Darwin)
 	FRAMEWORKS	= -framework OpenGL -framework Appkit

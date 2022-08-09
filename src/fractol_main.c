@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/07 16:18:01 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/08 22:54:02 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,43 +35,6 @@ void	frac_update(t_super *sup)
 	printf("Update DONE\n");
 }
 
-/*
-void	switch_julia_mandelbrot_mode(t_super *sup)
-{
-	t_frm	*frm;
-
-	frm = sup->frm;
-	if (frm->dist_func == mandelbrot_dist)
-		frm->dist_func = julia_dist;
-	else if (frm->dist_func == julia_dist)
-		frm->dist_func = burning_ship_dist;
-	else
-		frm->dist_func = mandelbrot_dist;
-	frm->cx = C_REAL;
-	frm->cy = C_IMAG;
-	frac_update(sup);
-}
-
-void	switch_color_palette(t_super *sup)
-{
-	t_frm	*frm;
-	int	pal_code;
-
-	frm = sup->frm;
-	pal_code = frm->pal.pal_code;
-	if (pal_code == PALETTE_MIAMI)
-		init_base_color_palette(&frm->pal, PALETTE_MONOCHROME);
-	else if (pal_code == PALETTE_MONOCHROME)
-		init_base_color_palette(&frm->pal, PALETTE_ORANGE);
-	else if (pal_code == PALETTE_ORANGE)
-		init_base_color_palette(&frm->pal, PALETTE_GREEN);
-	else if (pal_code == PALETTE_GREEN)
-		init_base_color_palette(&frm->pal, PALETTE_MIAMI);
-	printf("old pal_code vs new : %d, %d\n", pal_code, frm->pal.pal_code);
-	printf("new nb cols : %d\n", frm->pal.nb_cols);
-	frac_update(sup);
-}
-*/
 void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm)
 {
 	frm->dist_func(pix);
@@ -80,47 +43,8 @@ void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm)
 	printf("[ - value :	%f + %fi			]\n", creal(pix->z), cimag(pix->z));
 	printf("[ - dist :	%f 				]\n", pix->dist);
 }
+
 /*
-// Moves frame to mouse position
-int	frac_mouse_click(int button, int x, int y, t_super *sup)//t_frm *frm)
-{
-	t_pix	pix;
-	t_frm	*frm;
-
-	if (y < 0 || x < 0)
-		return (0);
-	frm = sup->frm;
-	printf("Pressed mouse button %d\n", button);
-	printf("clicked at screen coord : (%d, %d)\n", x, y);
- 	pix.sx = x;
-	pix.sy = y;
-	convert_pix_to_frame(frm, &pix, 1);
-	printf("converted screen coords to : (%f, %f)\n", pix.fx, pix.fy);
-	if (button == 1)
-		frac_set_frame_pos(sup, pix.fx, pix.fy);
-//		frac_move_frame(sup, (pix.fx - frm->px) / frm->zoom, (pix.fy - frm->py) / frm->zoom);
-	else if (button == 3)
-		give_mandelbrot_coord_rundown(&pix, frm);
-	else if (button == 4)
-		frac_dir_zoom(sup, pix.fx, pix.fy, -ZOOM_INCREMENT);
-	else if (button == 5)
-		frac_dir_zoom(sup, pix.fx, pix.fy, ZOOM_INCREMENT);
-	return (0);
-}
-
-void	frac_admin_switch(int keycode, t_super *sup)
-{	if (keycode == KC_Enter) 
-		frac_update(sup);
-	else if (keycode == KC_Escape)
-		on_close(sup);
-	else if (keycode == KC_Delete)
-		frac_reset_frame(sup);
-	else if (keycode == KC_Backspace)
-		switch_julia_mandelbrot_mode(sup);
-	else if (keycode == KC_c)
-		switch_color_palette(sup);
-}
-
 void	frac_controls_switch(int keycode, t_super *sup)
 {
 	if ((keycode == KC_KP_8) || (keycode == KC_w))
@@ -208,19 +132,24 @@ void	frac_print_defines(void)
 	printf("	ASPECT_RATIO : %f\n", ASP_RATIO);
 }
 
+void	init_frame(t_frm *frm)
+{
+	frm->zoom = INIT_ZOOM;
+	frm->px = INIT_POSX;
+	frm->py = INIT_POSY;
+	frm->ang = INIT_ANGLE;
+	frm->cx = INIT_CREAL;
+	frm->cy = INIT_CIMAG;
+	frm->dist_func = mandelbrot_dist;
+}
+
 int	main(void)
 {
 	t_mlx	mlx;
 	t_frm	frm;
 	t_super	super_struct;
 
-	frm.zoom = INIT_ZOOM;
-	frm.px = INIT_POSX;
-	frm.py = INIT_POSY;
-	frm.ang = INIT_ANGLE;
-	frm.cx = C_REAL;
-	frm.cy = C_IMAG;
-	frm.dist_func = mandelbrot_dist;
+	init_frame(&frm);
 	init_base_color_palette(&frm.pal, PALETTE_MIAMI);
 	
 	mlx_init_double_buff_window(&mlx, SCN_WIDTH, SCN_HEIGHT, "Fractol");
@@ -231,16 +160,21 @@ int	main(void)
 	printf("mlx->off_buff : %p\n", mlx.off_buff);
 	super_struct.mlx = &mlx;
 	super_struct.frm = &frm;
+	init_mouse_data(&super_struct);
 
 	printf("buff1  line_len, bytes per pixel: %d x %d\n", mlx.buff1.line_len, mlx.buff1.bytes_per_pxl);
 
 	mlx_key_hook(mlx.win, frac_key_switch, &super_struct);
-	mlx_mouse_hook(mlx.win, frac_mouse_click, &super_struct);
 	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &super_struct);
+//	mlx_mouse_hook(mlx.win, on_mouse_wheel, &super_struct);
+	mlx_hook(mlx.win, ON_MOUSEUP, 0, on_mouse_release, &super_struct);
+	mlx_hook(mlx.win, ON_MOUSEDOWN, 0, on_mouse_press, &super_struct);
+	mlx_hook(mlx.win, ON_MOUSEMOVE, 0, on_mouse_drag, &super_struct);
 	
-	mlx_set_bg_color(&mlx, 0x000000ff);
-	mlx_render_buffer(&mlx);
+//	mlx_set_bg_color(&mlx, 0x000000ff);
+//	mlx_render_buffer(&mlx);
 
+	frac_update(&super_struct);
 	mlx_loop(mlx.conn);
 	return (0);
 }

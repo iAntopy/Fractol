@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/06 13:45:31 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/08 23:19:42 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,33 +60,30 @@ void	frac_update(t_super *sup)
 
 	sm = sup->shmem;
 	printf("\n\n <<<<<< ----- ENTERING MULTIPROC UPDATE ----- >>>>>>>\n");
+	printf("shared mem draw_buff before swap : %p\n", sm->draw_buff);
 	if (sm->draw_buff == &sm->buff1)
 		sm->draw_buff = &sm->buff2;
 	else	
 		sm->draw_buff = &sm->buff1;
+	printf("shared mem draw_buff after swap : %p\n", sm->draw_buff);
 	buff = sm->draw_buff;
+	printf("Trying to clear buff %p\n", buff);
+	printf("with addr %p\n", buff->addr);
+	printf("and buff_size %zu\n", sup->mlx->buff_size);
 	ft_memclear(buff->addr, sup->mlx->buff_size);
+	printf("ordering pool draw !\n");
 	if (order_pool_draw(sup->pool, sm) < 0)
 	{
 		on_close(sup);
 		return ;
 	}
+	printf("pool draw successful !");
 	ft_memcpy(sup->mlx->off_buff->addr, buff->addr, sup->mlx->buff_size);
 	mlx_render_buffer(sup->mlx);
 	printf(" <<<<<< ----- MULTIPROC UPDATE COMPLET ----- >>>>>>>\n\n\n");
 }
 
-void	give_mandelbrot_coord_rundown(t_pix *pix)
-{
-	double	dist;
-	int	iters;
-
-	dist = mandelbrot_dist(pix, &iters);
-	printf("[ mandelbrot distance and value after %d iterations ]\n", iters);
-	printf("[ - value :	%f + %fi			]\n", creal(pix->z), cimag(pix->z));
-	printf("[ - dist :	%f 				]\n", dist);
-}
-
+/*
 // Moves frame to mouse position
 int	frac_mouse_click(int button, int x, int y, t_super *super)//t_frm *frm)
 {
@@ -138,7 +135,7 @@ int	frac_key_switch(int keycode, t_super *super)
 		super->multiproc = !super->multiproc;
 	return (0);
 }
-
+*/
 //DEBUG DELETE
 void	frac_print_defines(void)
 {
@@ -147,6 +144,37 @@ void	frac_print_defines(void)
 //	printf("	ASPECT_RATIO : %f\n", ASP_RATIO);
 	printf("	BUFFER_SIZE : %zu\n", BUFFER_SIZE);
 }
+
+void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm)
+{
+	frm->dist_func(pix);
+//	mandelbrot_dist(pix, pix->z);
+	printf("[ mandelbrot distance and value after %d iterations ]\n", pix->iters);
+	printf("[ - value :	%f + %fi			]\n", creal(pix->z), cimag(pix->z));
+	printf("[ - dist :	%f 				]\n", pix->dist);
+}
+
+void	init_frame(t_frm *frm)
+{
+	frm->zoom = INIT_ZOOM;
+	frm->px = INIT_POSX;
+	frm->py = INIT_POSY;
+	frm->cx = INIT_CREAL;
+	frm->cy = INIT_CIMAG;
+	frm->zoom = INIT_ZOOM;
+	frm->ang = INIT_ANGLE;
+	frm->dist_func = mandelbrot_dist;
+}
+/*
+void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm)
+{
+	frm->dist_func(pix);
+//	mandelbrot_dist(pix, pix->z);
+	printf("[ mandelbrot distance and value after %d iterations ]\n", pix->iters);
+	printf("[ - value :	%f + %fi			]\n", creal(pix->z), cimag(pix->z));
+	printf("[ - dist :	%f 				]\n", pix->dist);
+}
+*/
 
 int	main(void)
 {
@@ -165,30 +193,26 @@ int	main(void)
 	printf("aligning sizeof shmem : %zu, pagesize : %zu\n", sizeof(t_shmem) % sysconf(_SC_PAGE_SIZE), sysconf(_SC_PAGE_SIZE));
 	
 	frm = &sup.shmem->frm;
-	frm->pal = &sup.shmem->pal;
-	frm->zoom = INIT_ZOOM;
-	frm->px = INIT_POSX;
-	frm->py = INIT_POSY;
-	init_base_color_palette(frm->pal, PALETTE_MIAMI);
+	sup.frm = frm;
+	init_frame(frm);	
+	init_base_color_palette(&frm->pal, PALETTE_MIAMI);
 
 	if (init_process_pool(&pool, sup.shmem) < 0 || (pool.pool_status != STATUS_RUNNING))
 	{
 		close_process_pool(&pool, "Pool initialization failed");
 		return (-1);
 	}
+	printf("pool initialized SUCCESSFULLY!\n");
 
 	mlx_init_double_buff_window(&mlx, SCN_WIDTH, SCN_HEIGHT, "Fractol");
 	printf("MLX started\n");
 	printf("buff1.line_len : %d\n", mlx.buff1.line_len);
 	printf("buff2.line_len : %d\n", mlx.buff2.line_len);
 	printf("mlx.buffer_size : %zu\n", mlx.buff_size);
-	
+//	frac_print_defines();
 
-	frac_print_defines();
-
-	sup.frm = frm;
+	sup.mlx = &mlx;
 	sup.pool = &pool;
-	
 	sup.shmem->buff1 = mlx.buff1;
 	sup.shmem->buff2 = mlx.buff2;
 	sup.shmem->buff1.addr = sup.shmem->buff1_data;
@@ -196,13 +220,20 @@ int	main(void)
 
 	printf("buff1 line_len, bytes per pixel: %d x %d\n", mlx.buff1.line_len, mlx.buff1.bytes_per_pxl);
 
+	printf("buff_size before mouse_data : %zu\n", sup.mlx->buff_size);
+	init_mouse_data(&sup);
+	printf("buff_size before key_hook : %zu\n", sup.mlx->buff_size);
 	mlx_key_hook(mlx.win, frac_key_switch, &sup);
-	mlx_mouse_hook(mlx.win, frac_mouse_click, &sup);
 	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &sup);
+//	mlx_mouse_hook(mlx.win, on_mouse_wheel, &sup);//frac_mouse_click, &sup);
+	mlx_hook(mlx.win, ON_MOUSEUP, 0, on_mouse_release, &sup);
+	mlx_hook(mlx.win, ON_MOUSEDOWN, 0, on_mouse_press, &sup);
+	mlx_hook(mlx.win, ON_MOUSEMOVE, 0, on_mouse_drag, &sup);
 
+	printf("mlx->buff_size before rendering : %zu\n", sup.mlx->buff_size);
 	mlx_set_bg_color(&mlx, 0x000000ff);
 	mlx_render_buffer(&mlx);
-
+//	frac_update(sup);
 	mlx_loop(mlx.conn);
 
 	return (0);
