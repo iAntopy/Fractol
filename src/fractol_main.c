@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/08 22:54:02 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/11 22:15:35 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,94 +44,6 @@ void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm)
 	printf("[ - dist :	%f 				]\n", pix->dist);
 }
 
-/*
-void	frac_controls_switch(int keycode, t_super *sup)
-{
-	if ((keycode == KC_KP_8) || (keycode == KC_w))
-		frac_move_frame(sup, 0, -MOVE_INCREMENT);
-	else if ((keycode == KC_KP_5) || (keycode == KC_s))
-		frac_move_frame(sup, 0, MOVE_INCREMENT);
-	else if ((keycode == KC_KP_4) || (keycode == KC_a))
-		frac_move_frame(sup, -MOVE_INCREMENT, 0);
-	else if ((keycode == KC_KP_6) || (keycode == KC_d))
-		frac_move_frame(sup, MOVE_INCREMENT, 0);
-	else if ((keycode == KC_PageUp) || (keycode == KC_KP_Plus))
-		frac_zoom(sup, -ZOOM_INCREMENT);
-	else if ((keycode == KC_PageDown) || (keycode == KC_KP_Minus))
-		frac_zoom(sup, ZOOM_INCREMENT);
-	else if ((keycode == KC_KP_7) || (keycode == KC_q))
-		frac_rotate(sup, ROT_INCREMENT);
-	else if ((keycode == KC_KP_9) || (keycode == KC_e))
-		frac_rotate(sup, -ROT_INCREMENT);
-	else if (keycode == KC_Up)
-		frac_shift_julia(sup, 0, JULIA_INCREMENT);
-	else if (keycode == KC_Down)
-		frac_shift_julia(sup, 0, -JULIA_INCREMENT);
-	else if (keycode == KC_Left)
-		frac_shift_julia(sup, -JULIA_INCREMENT, 0);
-	else if (keycode == KC_Right)
-		frac_shift_julia(sup, JULIA_INCREMENT, 0);
-	else
-		printf("\n\nKEY %d HAS NO BINDING !\n", keycode);
-}
-
-int	frac_key_switch(int keycode, t_super *sup)
-{
-	printf("SOME KEY PRESSED : %d\n", keycode);
-	frac_admin_switch(keycode, sup);
-	frac_controls_switch(keycode, sup);
-	return (0);
-}
-*/
-/*
-	if (keycode == KC_Enter) 
-		frac_update(sup);
-	else if (keycode == KC_Escape)
-		on_close(sup);
-	else if (keycode == KC_Delete)
-		frac_reset_frame(sup);
-	else if (keycode == KC_Backspace)
-		switch_julia_mandelbrot_mode(sup);
-	else if (keycode == KC_c)
-		switch_color_palette(sup);
-	else if ((keycode == KC_KP_8) || (keycode == KC_w))
-		frac_move_frame(sup, 0, -MOVE_INCREMENT);
-	else if ((keycode == KC_KP_5) || (keycode == KC_s))
-		frac_move_frame(sup, 0, MOVE_INCREMENT);
-	else if ((keycode == KC_KP_4) || (keycode == KC_a))
-		frac_move_frame(sup, -MOVE_INCREMENT, 0);
-	else if ((keycode == KC_KP_6) || (keycode == KC_d))
-		frac_move_frame(sup, MOVE_INCREMENT, 0);
-	else if ((keycode == KC_PageUp) || (keycode == KC_KP_Plus))
-		frac_zoom(sup, -ZOOM_INCREMENT);
-	else if ((keycode == KC_PageDown) || (keycode == KC_KP_Minus))
-		frac_zoom(sup, ZOOM_INCREMENT);
-	else if ((keycode == KC_KP_7) || (keycode == KC_q))
-		frac_rotate(sup, ROT_INCREMENT);
-	else if ((keycode == KC_KP_9) || (keycode == KC_e))
-		frac_rotate(sup, -ROT_INCREMENT);
-	else if (keycode == KC_Up)
-		frac_shift_julia(sup, 0, JULIA_INCREMENT);
-	else if (keycode == KC_Down)
-		frac_shift_julia(sup, 0, -JULIA_INCREMENT);
-	else if (keycode == KC_Left)
-		frac_shift_julia(sup, -JULIA_INCREMENT, 0);
-	else if (keycode == KC_Right)
-		frac_shift_julia(sup, JULIA_INCREMENT, 0);
-	else
-		printf("\n\nKEY %d HAS NO BINDING !\n", keycode);
-	return (0);
-
-}
-*/
-//DEBUG DELETE
-void	frac_print_defines(void)
-{
-	printf("	SCN_WIDTH : %d\n	SCN_HEIGHT  %d\n	SCN_MIDX : %f\n	SCN_MIDY : %f\n", SCN_WIDTH, SCN_HEIGHT, SCN_MIDX, SCN_MIDY);
-	printf("	INIT_ZOOM : %f\n	INIT_POSX : %f\n	INIT_POSY : %f\n", INIT_ZOOM, INIT_POSX, INIT_POSY);
-	printf("	ASPECT_RATIO : %f\n", ASP_RATIO);
-}
-
 void	init_frame(t_frm *frm)
 {
 	frm->zoom = INIT_ZOOM;
@@ -143,7 +55,62 @@ void	init_frame(t_frm *frm)
 	frm->dist_func = mandelbrot_dist;
 }
 
-int	main(void)
+int	invalid_input_arg_procedure(char *arg)
+{
+		fperror(RED_BC"Invalid argument from display mode : %s\n"WHITE_C, arg);
+		display_help();
+		return (-1);
+}
+int	frac_parse_args(t_super *sup, int argc, char **argv)
+{
+	char	*arg;
+	char	*mode;
+	char	*p;
+
+	if (argc == 1)
+	{
+		display_help();
+		return (0);
+	}
+	mode = argv[1];
+	if (ft_strcmp(ft_tolower(argv[1]), "mandelbrot") == 0)
+		sup->frm->dist_func = mandelbrot_dist;
+	else if (ft_strcmp(ft_tolower(argv[1]), "julia") == 0)
+		sup->frm->dist_func = julia_dist;
+	else
+		return (invalid_input_arg_procedure(argv[1]));
+	if (argc > 2)
+	{
+		arg = argv[2];
+		p = ft_strchr(arg, '(');
+		if (!p)
+			return (invalid_input_arg_procedure(argv[2]));
+		sup->frm->px = ft_atoi(p + 1);
+		p = ft_strchr(p + 1, ',');
+		if (!p)
+			return (invalid_input_arg_procedure(argv[2]));
+		sup->frm->py = ft_atoi(p + 1);
+		if (!ft_strchr(p + 1, ')'))
+			return (invalid_input_arg_procedure(argv[2]));
+	}
+	if (argc > 3)
+	{
+		arg = argv[2];
+		p = ft_strchr(arg, '(');
+		if (!p)
+			return (invalid_input_arg_procedure(argv[2]));
+		sup->frm->px = ft_atoi(p + 1);
+		p = ft_strchr(p + 1, ',');
+		if (!p)
+			return (invalid_input_arg_procedure(argv[2]));
+		sup->frm->py = ft_atoi(p + 1);
+		if (!ft_strchr(p + 1, ')'))
+			return (invalid_input_arg_procedure(argv[2]));
+	}
+	return (1);
+}
+
+int	main(int argc, char **argv)
 {
 	t_mlx	mlx;
 	t_frm	frm;
