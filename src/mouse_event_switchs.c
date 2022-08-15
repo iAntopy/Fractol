@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 21:37:57 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/08 23:00:11 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/09 02:06:16 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ int	on_mouse_drag(int x, int y, t_super *sup)
 //		convert_pix_to_frame(frm, &pix, 0);
 		frac_set_julia_shift(sup, (x - SCN_MIDX) * INIT_ZOOM, (y - SCN_MIDY) * INIT_ZOOM);
 	}
+	printf("mouse moved in window\n");
 	sup->last_x = x;
 	sup->last_y = y;
 //	printf("Mouse is in window !\n");

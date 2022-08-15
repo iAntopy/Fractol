@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/08 22:54:54 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/13 17:31:33 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@
 # include "keycodes.h"
 # include "libft.h"
 
-# define SCN_WIDTH 1280// CHANGE HERE
-# define SCN_HEIGHT 1024// CHANGE HERE
+# define SCN_WIDTH 640// CHANGE HERE
+# define SCN_HEIGHT 480// CHANGE HERE
 
 # define SCN_MIDX ((double)SCN_WIDTH / 2)
 # define SCN_MIDY ((double)SCN_HEIGHT / 2)
 # define ASP_RATIO ((double)SCN_HEIGHT / SCN_WIDTH)
-# define MAX_ITER 100 
+# define MAX_ITER 50
 # define INIT_ZOOM (3.0f / SCN_HEIGHT)//1.0f
 # define ZOOM_INCREMENT 0.5
 # define INIT_POSX 0.0f
@@ -153,5 +153,13 @@ t_pix	*mandelbrot_dist(t_pix *pix);
 t_pix	*julia_dist(t_pix *pix);
 t_pix	*burning_ship_dist(t_pix *pix);
 t_pix	*burning_ship_julia_dist(t_pix *pix);
+t_pix	*celtic_dist(t_pix *pix);
+t_pix	*celtic_julia_dist(t_pix *pix);
+t_pix	*temple_dist(t_pix *pix);
+t_pix	*temple_julia_dist(t_pix *pix);
+t_pix	*crown_dist(t_pix *pix);
+t_pix	*crown_julia_dist(t_pix *pix);
+t_pix	*mandelbrot_5th_order_dist(t_pix *pix);
+t_pix	*julia_5th_order_dist(t_pix *pix);
 
 #endif

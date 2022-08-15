@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/11 22:15:35 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/12 16:18:41 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,14 @@ void	init_frame(t_frm *frm)
 	frm->cy = INIT_CIMAG;
 	frm->dist_func = mandelbrot_dist;
 }
-
+/*
 int	invalid_input_arg_procedure(char *arg)
 {
 		fperror(RED_BC"Invalid argument from display mode : %s\n"WHITE_C, arg);
 		display_help();
 		return (-1);
 }
+
 int	frac_parse_args(t_super *sup, int argc, char **argv)
 {
 	char	*arg;
@@ -93,35 +94,23 @@ int	frac_parse_args(t_super *sup, int argc, char **argv)
 		if (!ft_strchr(p + 1, ')'))
 			return (invalid_input_arg_procedure(argv[2]));
 	}
-	if (argc > 3)
-	{
-		arg = argv[2];
-		p = ft_strchr(arg, '(');
-		if (!p)
-			return (invalid_input_arg_procedure(argv[2]));
-		sup->frm->px = ft_atoi(p + 1);
-		p = ft_strchr(p + 1, ',');
-		if (!p)
-			return (invalid_input_arg_procedure(argv[2]));
-		sup->frm->py = ft_atoi(p + 1);
-		if (!ft_strchr(p + 1, ')'))
-			return (invalid_input_arg_procedure(argv[2]));
-	}
 	return (1);
 }
-
+*/
 int	main(int argc, char **argv)
 {
 	t_mlx	mlx;
 	t_frm	frm;
 	t_super	super_struct;
 
+	(void)argc;
+	(void)argv;
 	init_frame(&frm);
 	init_base_color_palette(&frm.pal, PALETTE_MIAMI);
 	
 	mlx_init_double_buff_window(&mlx, SCN_WIDTH, SCN_HEIGHT, "Fractol");
 	printf("MLX started\n");
-	frac_print_defines();
+//	frac_print_defines();
 
 	printf("mlx->screen_buff : %p\n", mlx.screen_buff);
 	printf("mlx->off_buff : %p\n", mlx.off_buff);
@@ -134,9 +123,9 @@ int	main(int argc, char **argv)
 	mlx_key_hook(mlx.win, frac_key_switch, &super_struct);
 	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &super_struct);
 //	mlx_mouse_hook(mlx.win, on_mouse_wheel, &super_struct);
-	mlx_hook(mlx.win, ON_MOUSEUP, 0, on_mouse_release, &super_struct);
-	mlx_hook(mlx.win, ON_MOUSEDOWN, 0, on_mouse_press, &super_struct);
-	mlx_hook(mlx.win, ON_MOUSEMOVE, 0, on_mouse_drag, &super_struct);
+	mlx_hook(mlx.win, ON_MOUSEUP, (1L << 3), on_mouse_release, &super_struct);
+	mlx_hook(mlx.win, ON_MOUSEDOWN, (1L << 2), on_mouse_press, &super_struct);
+	mlx_hook(mlx.win, ON_MOUSEMOVE, (1L << 6), on_mouse_drag, &super_struct);
 	
 //	mlx_set_bg_color(&mlx, 0x000000ff);
 //	mlx_render_buffer(&mlx);

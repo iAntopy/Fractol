@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/08 23:30:08 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/13 23:10:51 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ static int	__proc_await_draw_order(int idx, t_shmem *sm)
 	{
 		sigaddset(&sigset, SIG_TERM);
 		sigaddset(&sigset, SIG_DRAW);
-		printf("process %d waiting for signal like good boy!\n", idx);
+		printf("process %d (pid %d) waiting for signal like good boy!\n", idx, getpid());
 		sigwait(&sigset, &sig);
-//		printf("sig received from process %d : %d\n", idx, sig);
+		printf("sig received from process %d : %d\n", idx, sig);
 		if (sig == SIG_TERM)
 		{
 			printf("process %d received SIG_TERM signal.\n", idx);
@@ -92,11 +92,11 @@ int	order_pool_draw(t_pool *pool, t_shmem *sm)
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{
-//		printf("process %d draw order sending \n", i);
+		printf("process %d draw order sending \n", i);
 		sm->proc_draw_done[i] = 0;
-//		printf("process %d draw done set to false\n", i);
+		printf("process %d draw done set to false\n", i);
 		kill(pool->pids[i], SIG_DRAW);
-//		printf("process %d draw order sent \n", i);
+		printf("process %d (pid %d) draw order sent \n", i, pool->pids[i]);
 	}
 	printf("All orders sent\n");
 	printf("Parent process waiting for children .........\n");
@@ -205,12 +205,15 @@ int	init_process_pool(t_pool *pool, t_shmem *sm)
 	i = -1;
 	while (++i < NB_DRAWING_PROCS)
 	{
+		printf("before forking index %d\n", i);
 		fork_id = fork();
 		if (fork_id == 0)
+		{
+			printf("message from child with pid %d : forked and ready to go.\n", getpid());
 			__proc_await_draw_order(i, sm);//ii, pp, *frm);//Does not return
+		}
 		else if (fork_id < 0)
 			return (close_process_pool(pool, "closing pool : forking failed"));
-
 		pool->pids[i] = fork_id;
 		printf("Parent spawn child with pid : %d\n", fork_id);
 	}

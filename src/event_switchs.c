@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 16:04:35 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/08 19:39:17 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/13 18:02:17 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,22 @@ void	switch_julia_mandelbrot_mode(t_super *sup)
 		frm->dist_func = burning_ship_dist;
 	else if (frm->dist_func == burning_ship_dist)
 		frm->dist_func = burning_ship_julia_dist;
+	else if (frm->dist_func == burning_ship_julia_dist)
+		frm->dist_func = celtic_dist;
+	else if (frm->dist_func == celtic_dist)
+		frm->dist_func = celtic_julia_dist;
+	else if (frm->dist_func == celtic_julia_dist)
+		frm->dist_func = crown_dist;
+	else if (frm->dist_func == crown_dist)
+		frm->dist_func = crown_julia_dist;
+	else if (frm->dist_func == crown_julia_dist)
+		frm->dist_func = temple_dist;
+	else if (frm->dist_func == temple_dist)
+		frm->dist_func = temple_julia_dist;
+	else if (frm->dist_func == temple_julia_dist)
+		frm->dist_func = mandelbrot_5th_order_dist;
+	else if (frm->dist_func == mandelbrot_5th_order_dist)
+		frm->dist_func = julia_5th_order_dist;
 	else
 		frm->dist_func = mandelbrot_dist;
 	frac_update(sup);

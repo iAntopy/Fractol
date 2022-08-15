@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/08 23:48:33 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/13 23:22:04 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@
 # include "keycodes.h"
 # include "libft.h"
 
-# define __SCN_WIDTH 1280// CHANGE SCREEN WIDTH HERE
-# define __SCN_HEIGHT 1024// CHANGE SCREEN HEIGHT HERE
+# define __SCN_WIDTH 640//1280// CHANGE SCREEN WIDTH HERE
+# define __SCN_HEIGHT 480//1024// CHANGE SCREEN HEIGHT HERE
 
-# define NB_DRAWING_PROCS 8
+# define NB_DRAWING_PROCS 2
 
 //# define SCN_HEIGHT TRGT_SCN_HEIGHT + (TRGT_SCN_HEIGHT % NB_DRAWING_PROCS)
 # define SCN_WIDTH (__SCN_WIDTH + (__SCN_WIDTH % NB_DRAWING_PROCS))
@@ -117,7 +117,7 @@ enum	e_pool_status
 enum	e_drawing_instructions
 {
 	SIG_TERM = SIGTERM,
-	SIG_DRAW = SIGUSR1
+	SIG_DRAW = SIGCONT
 };
 
 enum	e_palette_codes
