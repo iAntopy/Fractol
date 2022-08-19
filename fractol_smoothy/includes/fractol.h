@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/18 23:57:06 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/19 04:23:46 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,10 @@ typedef struct	s_pixel
 	double complex	z;
 	double			cx;
 	double			cy;
-	int				nb_cols;
 	double			dist;
-	int				iters;
-	int				*palette;
+	int			iters;
+//	int			*palette;
+//	int			nb_cols;
 }	t_pix;
 
 typedef t_pix	*(t_dist_func)(t_pix *);

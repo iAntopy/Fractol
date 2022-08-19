@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 16:04:35 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/19 00:13:07 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/19 04:25:31 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	switch_color_palette(t_super *sup)
 
 static void	frac_admin_events_switch(int keycode, t_super *sup)
 {
-	if (keycode == KC_Enter) 
+	if (keycode == KC_Enter)
 		frac_update(sup);
 	else if (keycode == KC_Escape)
 		on_close(sup);

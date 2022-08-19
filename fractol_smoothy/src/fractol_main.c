@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/15 21:06:57 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/19 04:10:55 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,15 +83,6 @@ void	frac_update(t_super *sup)
 	printf(" <<<<<< ----- MULTIPROC UPDATE COMPLET ----- >>>>>>>\n\n\n");
 }
 
-//DEBUG DELETE
-void	frac_print_defines(void)
-{
-	printf("	SCN_WIDTH : %d\n	SCN_HEIGHT  %d\n	SCN_MIDX : %f\n	SCN_MIDY : %f\n", SCN_WIDTH, SCN_HEIGHT, SCN_MIDX, SCN_MIDY);
-//	printf("	FRM_WIDTH : %f\n	FRM_HEIGHT  %f\n	INIT_ZOOM : %f\n	INIT_POSX : %f\n	INIT_POSY : %f\n", FRM_WIDTH, FRM_HEIGHT, INIT_ZOOM, INIT_POSX, INIT_POSY);
-//	printf("	ASPECT_RATIO : %f\n", ASP_RATIO);
-	printf("	BUFFER_SIZE : %zu\n", BUFFER_SIZE);
-}
-
 void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm)
 {
 	frm->dist_func(pix);
@@ -111,15 +102,6 @@ void	init_frame(t_frm *frm)
 	frm->zoom = INIT_ZOOM;
 	frm->ang = INIT_ANGLE;
 	frm->dist_func = mandelbrot_dist;
-}
-
-void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm)
-{
-	frm->dist_func(pix);
-//	mandelbrot_dist(pix, pix->z);
-	printf("[ mandelbrot distance and value after %d iterations ]\n", pix->iters);
-	printf("[ - value :	%f + %fi			]\n", creal(pix->z), cimag(pix->z));
-	printf("[ - dist :	%f 				]\n", pix->dist);
 }
 */
 
@@ -165,7 +147,17 @@ int	on_update(t_super *sup)
 	return (0);
 }
 
-int	main(void)
+static void	init_event_hooks(t_super *sup)
+{
+	init_mouse_data(sup);
+	mlx_key_hook(sup->mlx->win, frac_key_switch, sup);
+	mlx_hook(sup->mlx->win, ON_DESTROY, 0, on_close, sup);
+	mlx_hook(sup->mlx->win, ON_MOUSEUP, (1L << 3), on_mouse_release, sup);
+	mlx_hook(sup->mlx->win, ON_MOUSEDOWN, (1L << 2), on_mouse_press, sup);
+	mlx_hook(sup->mlx->win, ON_MOUSEMOVE, (1L << 6), on_mouse_drag, sup);
+}
+
+int	main(int argc, char **argv)
 {
 	t_pool	pool;
 	t_super	sup;
@@ -179,13 +171,15 @@ int	main(void)
 	printf("sizeof shared mem : %zu\n", sizeof(t_shmem) + (sizeof(t_shmem) % sysconf(_SC_PAGE_SIZE)));
 	printf("raw sizeof shmem : %zu\n", sizeof(t_shmem));
 	printf("aligning sizeof shmem : %zu, pagesize : %zu\n", sizeof(t_shmem) % sysconf(_SC_PAGE_SIZE), sysconf(_SC_PAGE_SIZE));
-
 	printf("FRAME_USEC : %f\n", FRAME_USEC);
-	
+
+	init_frame(&sup.shmem->sfrm);
+	if (!parse_inputs(sup.shmem->sfrm, argc, argv))
+		return (1);
 	frm = &sup.frm;
-	init_frame(frm);
-	init_base_color_palette(&frm->pal, PALETTE_MIAMI);
-	sup.shmem->sfrm = *frm;
+//	init_frame(frm);
+//	init_base_color_palette(&frm->pal, PALETTE_MIAMI);
+	*frm = sup.shmem->sfrm;
 
 	if (init_process_pool(&pool, sup.shmem) < 0 || (pool.pool_status != STATUS_RUNNING))
 	{
@@ -210,23 +204,22 @@ int	main(void)
 	sup.needs_update = 1;
 
 	printf("buff1 line_len, bytes per pixel: %d x %d\n", mlx.buff1.line_len, mlx.buff1.bytes_per_pxl);
-
 	printf("buff_size before mouse_data : %zu\n", sup.mlx->buff_size);
-	init_mouse_data(&sup);
 	printf("buff_size before key_hook : %zu\n", sup.mlx->buff_size);
-	mlx_key_hook(mlx.win, frac_key_switch, &sup);
-	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &sup);
+
+	init_event_hooks(&sup);
+//	mlx_key_hook(mlx.win, frac_key_switch, &sup);
+//	mlx_hook(mlx.win, ON_DESTROY, 0, on_close, &sup);
 //	mlx_mouse_hook(mlx.win, on_mouse_wheel, &sup);//frac_mouse_click, &sup);
-	mlx_hook(mlx.win, ON_MOUSEUP, 0, on_mouse_release, &sup);
-	mlx_hook(mlx.win, ON_MOUSEDOWN, 0, on_mouse_press, &sup);
-	mlx_hook(mlx.win, ON_MOUSEMOVE, 0, on_mouse_drag, &sup);
-	mlx_loop_hook(mlx.conn, on_update, &sup);
+//	mlx_hook(mlx.win, ON_MOUSEUP, 0, on_mouse_release, &sup);
+//	mlx_hook(mlx.win, ON_MOUSEDOWN, 0, on_mouse_press, &sup);
+//	mlx_hook(mlx.win, ON_MOUSEMOVE, 0, on_mouse_drag, &sup);
+//	mlx_loop_hook(mlx.conn, on_update, &sup);
 
 	printf("mlx->buff_size before rendering : %zu\n", sup.mlx->buff_size);
-	mlx_set_bg_color(&mlx, 0x000000ff);
-	mlx_render_buffer(&mlx);
-//	frac_update(sup);
+//	mlx_set_bg_color(&mlx, 0x000000ff);
+//	mlx_render_buffer(&mlx);
+	frac_update(sup);
 	mlx_loop(mlx.conn);
-
 	return (0);
 }
