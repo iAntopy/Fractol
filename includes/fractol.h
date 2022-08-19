@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/13 17:31:33 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/18 23:36:57 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@
 # include "keycodes.h"
 # include "libft.h"
 
-# define SCN_WIDTH 640// CHANGE HERE
-# define SCN_HEIGHT 480// CHANGE HERE
+# define SCN_WIDTH 1280// CHANGE HERE
+# define SCN_HEIGHT 1024// CHANGE HERE
 
 # define SCN_MIDX ((double)SCN_WIDTH / 2)
 # define SCN_MIDY ((double)SCN_HEIGHT / 2)
 # define ASP_RATIO ((double)SCN_HEIGHT / SCN_WIDTH)
-# define MAX_ITER 50
+# define MAX_ITER 150
 # define INIT_ZOOM (3.0f / SCN_HEIGHT)//1.0f
 # define ZOOM_INCREMENT 0.5
 # define INIT_POSX 0.0f
@@ -69,10 +69,10 @@ typedef struct	s_pixel
 	double complex	z;
 	double		cx;
 	double		cy;
-	int			nb_cols;
 	double		dist;
 	int			iters;
-	int			*palette;
+//	int			nb_cols;
+//	int			*palette;
 }	t_pix;
 
 typedef t_pix *(*t_dist_func)(t_pix *);
@@ -112,9 +112,8 @@ typedef struct	s_super_struct
 }	t_super;
 
 // FUNCTION PROTOTYPES
-//void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print);
-//void	convert_vect_to_frame(t_frm *frm, t_pix *pix);
 void	draw_mandelbrot(t_img *buff, t_frm *frm);
+int		parse_inputs(t_frm *frm, int argc, char **argv);
 
 // CORE EVENTS
 int	on_close(t_super *sup);
@@ -134,10 +133,10 @@ void	switch_color_julia_mandelbrot_mode(t_super *sup);
 void	frac_update(t_super *sup);
 
 void	init_base_color_palette(t_pal *pal, int pal_code);
-void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm);
+//void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm);
 
 // SCREEN TO FRAME CONVERTER FUNCTIONS
-void	convert_pix_to_frame(t_frm *frm, t_pix *pix, int print);
+void	convert_pix_to_frame(t_frm *frm, t_pix *pix);
 void	convert_vect_to_frame(t_frm *frm, t_pix *pix);
 
 // MOVE FRAME FUNCITONS

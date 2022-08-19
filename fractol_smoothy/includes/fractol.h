@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/17 23:55:54 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/18 23:57:06 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,8 @@
 # include <stdio.h>
 # include <math.h>
 # include <complex.h>
-//# include <signal.h>
-//# include <sys/mman.h>
-# include <pthread.h>
+# include <signal.h>
+# include <sys/mman.h>
 
 # include "mlx.h"
 # include "mlxadds.h"
@@ -39,21 +38,28 @@
 //# define ASP_RATIO ((double)SCN_HEIGHT / SCN_WIDTH)
 //# define FRM_WIDTH 4.0f
 //# define FRM_HEIGHT ASP_RATIO * FRM_WIDTH//4.0f
-# define MAX_ITER 300 
+# define MAX_ITER 200 
 # define INIT_ZOOM (4.0f / SCN_HEIGHT)
 # define ZOOM_INCREMENT 0.5
 # define INIT_POSX 0.0f
 # define INIT_POSY 0.0f
-# define MOVE_INCREMENT 0.1f
+# define MOVE_INCREMENT 10.0f
 # define INIT_ANGLE 0.0f
-# define ROT_INCREMENT (2 * M_PI / 256)
+# define ROT_INCREMENT (2 * M_PI / 32)
 # define INIT_CREAL 0.0f
 # define INIT_CIMAG 0.0f
 # define JULIA_INCREMENT 0.05f
 
 # define BAILOUT_DIST INT_MAX
 
-# define NBCOLS 7
+// LOOP ANIMATION
+# define FPS 30
+# define FRAME_USEC (1.0f / FPS * 1000000)
+# define MV_THLD 5
+# define ZM_THLD 0.1
+# define RT_THLD 0.031415
+# define JL_THLD 0.002
+# define SMOOTHNESS 20// Represents the nb of subdivisions of a movement. (Higher is smoother.)
 
 //PROCESS DEFINES
 # define DRAWN_Y_RANGE (SCN_HEIGHT / NB_DRAWING_PROCS)
@@ -118,7 +124,7 @@ enum	e_pool_status
 enum	e_drawing_instructions
 {
 	SIG_TERM = SIGTERM,
-	SIG_DRAW = SIGCONT
+	SIG_DRAW = SIGUSR1
 };
 
 enum	e_palette_codes
@@ -133,7 +139,7 @@ enum	e_palette_codes
 // mem unused if OpenGL used.
 typedef struct	s_shared_mem_mproc_double_buff
 {
-	t_frm	frm;
+	t_frm	sfrm;			// Screen frame
 	int		proc_draw_done[NB_DRAWING_PROCS];
 	t_img	*draw_buff;	//PTR TO ONE OF THE BUFFERS BELOW IN WHICH TO DRAW
 	t_img	buff1;
@@ -145,11 +151,8 @@ typedef struct	s_shared_mem_mproc_double_buff
 // Process pool data held by main process
 typedef struct	s_process_pool
 {
-	int				pool_status;
-	int				signal;
-	pthread_t		pids[NB_DRAWING_PROCS];
-//	int				pids[NB_DRAWING_PROCS];
-	pthread_cond_t	cond;
+	int	pool_status;
+	int	pids[NB_DRAWING_PROCS];
 }	t_pool;
 
 // containes all major sub structures for global management
@@ -157,26 +160,16 @@ typedef struct	s_super_struct
 {
 	t_mlx	*mlx;
 	t_pool	*pool;
-	t_frm	*frm;
-//	t_shmem	*shmem;
-	t_shmem	shmem;
+	t_frm	frm;			//Target Frame set by user
+	t_shmem	*shmem;
+	int		needs_update;	//True if change to frame was made and until frame has reached target state.
 	int		mouse_1_pressed;
 	int		mouse_3_pressed;
 	int		mouse_1_dragging;
 	int		mouse_3_dragging;
 	int		last_x;
 	int		last_y;
-//	pthread_cond_t	cond;
 }	t_super;
-
-typedef struct	s_pthread_pkg
-{
-	t_shmem			*sm;
-	int				idx;
-	int				*signal;
-	pthread_cond_t	*cond;
-	pthread_mutex_t	lock;
-}	t_pkg;
 
 
 // FUNCTION PROTOTYPES
@@ -186,7 +179,6 @@ void	convert_pix_to_frame(t_frm *frm, t_pix *pix);//, int print);
 void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end);
 void	frac_update(t_super *super);
 //void	frac_update_multiprocessor(t_super *super);
-void	init_frame(t_frm *frm);
 void	init_base_color_palette(t_pal *pal, int pal_code);
 void	give_mandelbrot_coord_rundown(t_pix *pix, t_frm *frm);
 void	frac_shift_julia(t_super *sup, double real, double imag);
@@ -203,10 +195,13 @@ void	frac_zoom(t_super *super, double increment);
 void	frac_dir_zoom(t_super *sup, double x, double y, double increment);
 void	frac_rotate(t_super *sup, double increment);
 void	frac_reset_frame(t_super *sup);
+void	frac_stop_animation(t_super *sup);
+void	reset_frame(t_frm * frm);
+void	init_frame(t_frm *frm);
 
 // EVENT SWITCHES
-void	switch_julia_mandelbrot_mode(t_super *sup);
-void	switch_color_palette(t_super *sup);
+//void	switch_julia_mandelbrot_mode(t_super *sup);
+//void	switch_color_palette(t_super *sup);
 int		frac_key_switch(int keycode, t_super *sup);
 
 // MOUSE EVENT MANAGERS
@@ -217,13 +212,10 @@ int	on_mouse_press(int button, int x, int y, t_super *sup);
 int	on_mouse_drag(int x, int y, t_super *sup);
 
 // DRAW POOL FUNCTIONS
-int	init_pthread_pool(t_pool *pool, t_shmem *sm);//, t_frm *frm);
-int	close_pthread_pool(t_pool *pool, char *err_msg);
-int	order_pthread_pool_draw(t_pool *pool, t_shmem *sm);
-//int	init_process_pool(t_pool *pool, t_shmem *sm);//, t_frm *frm);
-//int	close_process_pool(t_pool *pool, char *err_msg);
-//int	force_close_process_pool(t_pool *pool, char *err_msg);
-//int	order_pool_draw(t_pool *pool, t_shmem *sm);//t_frm *frm, t_mlx *mlx);
+int	init_process_pool(t_pool *pool, t_shmem *sm);//, t_frm *frm);
+int	close_process_pool(t_pool *pool, char *err_msg);
+int	force_close_process_pool(t_pool *pool, char *err_msg);
+int	order_pool_draw(t_pool *pool, t_shmem *sm);//t_frm *frm, t_mlx *mlx);
 
 // DIST FUNCTIONS
 t_pix	*mandelbrot_dist(t_pix *pix);
@@ -236,6 +228,8 @@ t_pix	*temple_dist(t_pix *pix);
 t_pix	*temple_julia_dist(t_pix *pix);
 t_pix	*crown_dist(t_pix *pix);
 t_pix	*crown_julia_dist(t_pix *pix);
+t_pix	*cupid_dist(t_pix *pix);
+t_pix	*cupid_julia_dist(t_pix *pix);
 t_pix	*mandelbrot_5th_order_dist(t_pix *pix);
 t_pix	*julia_5th_order_dist(t_pix *pix);
 

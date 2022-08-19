@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/28 16:20:53 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/03 22:26:09 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/18 21:32:54 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ char	*ft_strstr(const char *s1, const char *s2);
 int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_atoi(const char *str);
+int		ft_atoi_base(const char *str, int base, const char *base_str);
 void	*ft_calloc(size_t nmemb, size_t size);
 
 int		ft_isalnum(int c);
@@ -75,6 +76,8 @@ int		ft_islower(int c);
 int		ft_isupper(int c);
 int		ft_isprint(int c);
 int		ft_isspace(int c);
+int		ft_islower(int c);
+int		ft_isupper(int c);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
 
@@ -96,6 +99,10 @@ char	**ft_split(char const *s, char c);
 char	**ft_split_set(char const *s, char *set);
 char	**ft_split_space(char const *s);
 char	*ft_itoa(int n);
+double	ft_atof(const char *str);
+int		ft_pow(int nb, int exp);
+char	*ft_strlower(char *str);
+char	*ft_strupper(char *str);
 
 void	ft_putchar(int c);
 void	ft_putstr(char const *s);
@@ -112,7 +119,8 @@ void	ft_swap_f(float *a, float *b);
 int		ft_clamp(int n, int min, int max);
 
 void	fperror(char *fmt, ...);
-ssize_t	ft_deltatime_usec(char *note);
+ssize_t	ft_deltatime_usec(void);
+ssize_t	ft_deltatime_usec_note(char *note);
 float	ft_random(void);
 int		ft_randint(int min, int range);
 

@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 21:13:22 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/07 02:49:39 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/18 22:37:12 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,5 +104,3 @@ void	init_base_color_palette(t_pal *pal, int pal_code)
 	else
 		fperror("Invalid palette code");
 }
-
-

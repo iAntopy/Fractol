@@ -1,7 +1,7 @@
 #SRCS	= $(wildcard *.c)
 
 #SRCS	:= $(filter-out $(wildcard src/*pool.c), $(wildcard src/*.c))
-SRCS	:= $(wildcard src/*.c)
+SRCS	:= $(wildcard src/*.c) $(wildcard src/dist_funcs/*.c)
 
 OBJS	= $(SRCS:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 21:37:57 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/11 14:39:50 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/15 20:50:46 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	on_mouse_press(int button, int x, int y, t_super *sup)
 	else if (button == 4)
 		frac_dir_zoom(sup, x, y, ZOOM_INCREMENT);
 	else if (button == 5)
-		frac_dir_zoom(sup, x, y, -ZOOM_INCREMENT);
+		frac_dir_zoom(sup, SCN_MIDX, SCN_MIDY, -ZOOM_INCREMENT);
 	return (0);
 }
 

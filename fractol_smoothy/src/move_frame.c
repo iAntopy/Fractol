@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/23 13:29:32 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/11 15:31:26 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/15 20:59:18 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	frac_move_frame(t_super *sup, double deltaX, double deltaY)
 	pix.sy = deltaY;
 //	printf("init deltaXY : (%f, %f), vs original (%f, %f), zoom : %f\n", pix.sx, pix.sy, deltaX, deltaY, frm.zoom);
 
-	convert_vect_to_frame(&sup->frm, &pix);
+	convert_vect_to_frame(&sup->shmem->sfrm, &pix);
 //	printf("converted deltaXY : (%f, %f)\n", pix.fx, pix.fy);
 //	ratio = frm.zoom / INIT_ZOOM;
 //	printf("frm.px, py : %lf, %lf\n", frm.px, frm.py);
@@ -71,14 +71,20 @@ void	frac_dir_zoom(t_super *sup, double x, double y, double increment)
 	double	ratio;
 
 	ratio = sup->frm.zoom * increment * 1.1;
-	cos_ang = cos(sup->frm.ang);
-	sin_ang = sin(sup->frm.ang);
+	cos_ang = cos(sup->shmem->sfrm.ang);
+	sin_ang = sin(sup->shmem->sfrm.ang);
 	Fx = x - SCN_MIDX;
 	Fy = y - SCN_MIDY;
 	sup->frm.px += (Fx * cos_ang - Fy * sin_ang) * ratio;
 	sup->frm.py += (Fx * sin_ang + Fy * cos_ang) * ratio;
 	sup->frm.zoom *= (1 - increment);
 	sup->needs_update = 1;
+}
+
+void	frac_stop_animation(t_super *sup)
+{
+	sup->needs_update = 0;
+	sup->frm = sup->shmem->sfrm;
 }
 
 void	frac_reset_frame(t_super *sup)

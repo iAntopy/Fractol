@@ -6,32 +6,44 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 16:04:35 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/11 15:27:02 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/19 00:13:07 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void	switch_julia_mandelbrot_mode(t_super *sup)
+static void	switch_julia_mandelbrot_mode(t_super *sup, t_frm *frm)
 {
-	t_frm	*frm;
-
-	frm = &sup->shmem->sfrm;
+	reset_frame(frm);
+	sup->frm = *frm;
 	if (frm->dist_func == mandelbrot_dist)
 		frm->dist_func = julia_dist;
 	else if (frm->dist_func == julia_dist)
 		frm->dist_func = burning_ship_dist;
 	else if (frm->dist_func == burning_ship_dist)
 		frm->dist_func = burning_ship_julia_dist;
+	else if (frm->dist_func == burning_ship_julia_dist)
+		frm->dist_func = celtic_dist;
+	else if (frm->dist_func == celtic_dist)
+		frm->dist_func = celtic_julia_dist;
+	else if (frm->dist_func == celtic_julia_dist)
+		frm->dist_func = crown_dist;
+	else if (frm->dist_func == crown_dist)
+		frm->dist_func = crown_julia_dist;
+	else if (frm->dist_func == crown_julia_dist)
+		frm->dist_func = mandelbrot_5th_order_dist;
+	else if (frm->dist_func == mandelbrot_5th_order_dist)
+		frm->dist_func = julia_5th_order_dist;
 	else
 		frm->dist_func = mandelbrot_dist;
 	frac_update(sup);
+	sup->needs_update = 0;
 }
 
-void	switch_color_palette(t_super *sup)
+static void	switch_color_palette(t_super *sup)
 {
 	t_frm	*frm;
-	int	pal_code;
+	int		pal_code;
 
 	frm = &sup->shmem->sfrm;
 	pal_code = frm->pal.pal_code;
@@ -49,16 +61,19 @@ void	switch_color_palette(t_super *sup)
 }
 
 static void	frac_admin_events_switch(int keycode, t_super *sup)
-{	if (keycode == KC_Enter) 
+{
+	if (keycode == KC_Enter) 
 		frac_update(sup);
 	else if (keycode == KC_Escape)
 		on_close(sup);
 	else if (keycode == KC_Delete)
 		frac_reset_frame(sup);
 	else if (keycode == KC_Backspace)
-		switch_julia_mandelbrot_mode(sup);
+		switch_julia_mandelbrot_mode(sup, &sup->shmem->sfrm);
 	else if (keycode == KC_c)
 		switch_color_palette(sup);
+	else if (keycode == KC_KP_0 || keycode == KC_Shift_R)
+		frac_stop_animation(sup);
 }
 
 static void	frac_control_events_switch(int keycode, t_super *sup)

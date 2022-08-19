@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/11 22:48:31 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/15 21:06:57 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,12 +154,12 @@ int	on_update(t_super *sup)
 		sup->needs_update = 0;
 		return (0);
 	}
-	sfrm->px += dfrm[0] / 20;
-	sfrm->py += dfrm[1] / 20;
-	sfrm->zoom += dfrm[2] / 20;
-	sfrm->ang += dfrm[3] / 20;
-	sfrm->cx += dfrm[4] / 20;
-	sfrm->cy += dfrm[5] / 20;
+	sfrm->px += dfrm[0] / SMOOTHNESS;
+	sfrm->py += dfrm[1] / SMOOTHNESS;
+	sfrm->zoom += dfrm[2] / SMOOTHNESS;
+	sfrm->ang += dfrm[3] / SMOOTHNESS;
+	sfrm->cx += dfrm[4] / SMOOTHNESS;
+	sfrm->cy += dfrm[5] / SMOOTHNESS;
 	frac_update(sup);
 	cumul_time = 0;
 	return (0);

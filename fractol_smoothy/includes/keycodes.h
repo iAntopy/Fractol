@@ -1,34 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_frame.c                                       :+:      :+:    :+:   */
+/*   keycodes.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/11 15:28:14 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/15 21:17:53 by iamongeo         ###   ########.fr       */
+/*   Created: 2022/07/05 19:40:32 by iamongeo          #+#    #+#             */
+/*   Updated: 2022/07/05 19:46:04 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+// Unified keycode macro definitions for unix (X server) and macos
+// Include this header in code to get access.
 
-void	init_frame(t_frm *frm)
-{
-	frm->zoom = INIT_ZOOM;
-	frm->px = INIT_POSX;
-	frm->py = INIT_POSY;
-	frm->cx = INIT_CREAL;
-	frm->cy = INIT_CIMAG;
-	frm->zoom = INIT_ZOOM;
-	frm->ang = INIT_ANGLE;
-	frm->dist_func = mandelbrot_dist;
-}
-
-void	reset_frame(t_frm *frm)
-{
-	frm->zoom = INIT_ZOOM;
-	frm->px = INIT_POSX;
-	frm->py = INIT_POSY;
-	frm->zoom = INIT_ZOOM;
-	frm->ang = INIT_ANGLE;
-}
+#ifdef __APPLE__
+	#include "keycodes_macos.h"
+#elif __unix__
+	#include "keycodes_xserv.h"
+#endif
