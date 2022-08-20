@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/19 04:22:00 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/20 06:43:47 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 static int	get_pix_color(int *pal, int nb_cols, double dist, int iters)
 {
-	int	*pcols[2];
-	int	colors[3];
+	int		*pcols[2];
+	int		colors[3];
 	double	interpol;
 	double	norm_iters;
 
@@ -31,7 +31,7 @@ static int	get_pix_color(int *pal, int nb_cols, double dist, int iters)
 	return ((colors[0] << 16) | (colors[1] << 8) | colors[2]);
 }
 
-void	draw_mandelbrot(t_img *buff, t_frm *frm)
+void	draw_mandelbrot(t_img *buff, t_frm *frm, int y_start, int y_end)
 {
 	t_pix	pix;
 	int		x;
@@ -40,8 +40,8 @@ void	draw_mandelbrot(t_img *buff, t_frm *frm)
 
 	pix.cx = frm->cx;
 	pix.cy = frm->cy;
-	y = -1;
-	while (++y < SCN_HEIGHT)
+	y = y_start - 1;
+	while (++y < y_end)
 	{
 		pix.sy = y;
 		x = -1;

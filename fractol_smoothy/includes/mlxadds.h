@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 17:32:17 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/04 16:33:04 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/20 07:38:45 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,18 @@ enum	e_event_codes
 	ON_MOUSEMOVE = 6,
 	ON_EXPOSE = 12,
 	ON_DESTROY = 17
-
 };
 
-typedef struct	s_img_data
+typedef struct s_img_data
 {
 	void	*img;
 	char	*addr;
-	int	bytes_per_pxl;	//Don't forget to divide bits_per_pixel by 8.
-	int	line_len;
-	int	endian;	
+	int		bytes_per_pxl;
+	int		line_len;
+	int		endian;
 }	t_img;
 
-typedef struct	s_mlx_data
+typedef struct s_mlx_data
 {
 	void	*conn;
 	void	*win;
@@ -54,11 +53,11 @@ typedef struct	s_mlx_data
 	t_img	buff2;
 }	t_mlx;
 
-t_mlx	*mlx_init_double_buff_window(t_mlx *mlx, int width, int height, char *title);
-int	mlx_swap_buffers(t_mlx *mlx);
+t_mlx	*mlx_init_double_buff_window(t_mlx *mlx, int w, int h, char *title);
+int		mlx_swap_buffers(t_mlx *mlx);
 void	mlx_buff_put_pixel(t_img *img, int x, int y, int col);
 void	mlx_draw_line(t_mlx *mlx, int start[2], int end[2], int col);
-void	mlx_clear_buffer(t_mlx *mlx); //Clears the off screen buffer by setting its data to 0.
+void	mlx_clear_buffer(t_mlx *mlx);
 void	mlx_set_bg_color(t_mlx *mlx, int col);
 void	mlx_render_buffer(t_mlx *mlx);
 void	mlx_close(t_mlx *mlx);

@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 16:04:35 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/19 04:25:31 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/20 05:34:50 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ static void	switch_color_palette(t_super *sup)
 		init_base_color_palette(&frm->pal, PALETTE_GREEN);
 	else if (pal_code == PALETTE_GREEN)
 		init_base_color_palette(&frm->pal, PALETTE_MIAMI);
-	printf("old pal_code vs new : %d, %d\n", pal_code, frm->pal.pal_code);
-	printf("new nb cols : %d\n", frm->pal.nb_cols);
 	frac_update(sup);
 }
 
@@ -106,7 +104,6 @@ static void	frac_control_events_switch(int keycode, t_super *sup)
 
 int	frac_key_switch(int keycode, t_super *sup)
 {
-	printf("SOME KEY PRESSED : %d\n", keycode);
 	frac_admin_events_switch(keycode, sup);
 	frac_control_events_switch(keycode, sup);
 	return (0);

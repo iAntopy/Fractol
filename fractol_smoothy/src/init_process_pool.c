@@ -6,20 +6,20 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/19 04:46:59 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/20 06:46:23 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 #include <unistd.h>
-#include <string.h>
-#include <errno.h>
+//#include <string.h>
+//#include <errno.h>
 #include <sys/wait.h>
 
 static int	__proc_await_draw_order(int idx, t_shmem *sm)
 {
-	int		y_offset;
-	int		sig;
+	int			y_offset;
+	int			sig;
 	sigset_t	sigset;
 
 	sigemptyset(&sigset);
@@ -44,9 +44,7 @@ static int	__proc_await_draw_order(int idx, t_shmem *sm)
 
 int	order_pool_draw(t_pool *pool, t_shmem *sm)
 {
-//	int	i;
-//	ssize_t	dt;
-	int	i;
+	int		i;
 	ssize_t	dt;
 
 	i = -1;
@@ -78,7 +76,9 @@ int	force_close_process_pool(t_pool *pool, char *err_msg)
 	while (++i < NB_DRAWING_PROCS)
 		if (pool->pids[i])
 			kill(pool->pids[i], SIGKILL);
-	return (-2);
+	if (err_msg)
+		fperror(err_msg);
+	return (EXIT_FORCED_CLOSE);
 }
 
 int	close_process_pool(t_pool *pool, char *err_msg)
@@ -94,14 +94,11 @@ int	close_process_pool(t_pool *pool, char *err_msg)
 	wait(NULL);
 	if (err_msg)
 	{
-		printf("Closing process pool due to error : \n");
 		pool->pool_status = STATUS_BROKEN;
-		fprintf(stderr, "%s\n", err_msg);
+		fperror(err_msg);
 		return (-1);
 	}
 	pool->pool_status = STATUS_CLOSED;
-	printf("all processes successfully closed with pool_status %d !\n",
-		pool->pool_status);
 	return (0);
 }
 
@@ -118,9 +115,9 @@ int	init_process_pool(t_pool *pool, t_shmem *sm)
 		if (fork_id == 0)
 			__proc_await_draw_order(i, sm);
 		else if (fork_id < 0)
-			return (close_process_pool(pool, "closing pool : forking failed"));
+			return (close_process_pool(pool,
+					"closing pool : forking failed"));
 		pool->pids[i] = fork_id;
-		printf("Parent spawn child with pid : %d\n", fork_id);
 	}
 	pool->pool_status = STATUS_RUNNING;
 	return (1);
