@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/18 23:36:57 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/20 08:45:37 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 # define SCN_MIDY ((double)SCN_HEIGHT / 2)
 # define ASP_RATIO ((double)SCN_HEIGHT / SCN_WIDTH)
 # define MAX_ITER 150
-# define INIT_ZOOM (3.0f / SCN_HEIGHT)//1.0f
+# define INIT_ZOOM (4.0f / SCN_HEIGHT)//1.0f
 # define ZOOM_INCREMENT 0.5
 # define INIT_POSX 0.0f
 # define INIT_POSY 0.0f
