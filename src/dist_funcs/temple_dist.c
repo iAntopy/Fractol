@@ -6,11 +6,11 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 22:25:28 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/18 22:31:49 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/27 06:06:42 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_core.h"
 
 t_pix	*temple_dist(t_pix *pix)
 {
@@ -27,13 +27,12 @@ t_pix	*temple_dist(t_pix *pix)
 	i = -1;
 	while (++i < MAX_ITER && (sqx + sqy) < BAILOUT_DIST)
 	{
-		sqx = fabs(zx * fabs(zx) - sqy) + pix->fx;
-		zy = 2 * fabs(zx) * zy + pix->fy;
-		zx = sqx;
+		sqy = fabs(zy * fabs(zy) - sqx) + pix->fy;
+		zx = 2 * fabs(zy) * zx + pix->fx;
+		zy = sqy;
 		sqx = zx * zx;
 		sqy = zy * zy;
 	}
-	pix->z = zx + zy * I;
 	pix->iters = i;
 	pix->dist = zx * zx + zy * zy;
 	return (pix);
@@ -54,13 +53,12 @@ t_pix	*temple_julia_dist(t_pix *pix)
 	i = -1;
 	while (++i < MAX_ITER && (sqx + sqy) < BAILOUT_DIST)
 	{
-		sqx = fabs(zx * fabs(zx) - sqy) + pix->cx;
-		zy = 2 * fabs(zx) * zy + pix->cy;
-		zx = sqx;
+		sqy = fabs(zy * fabs(zy) - sqx) + pix->cy;
+		zx = 2 * fabs(zy) * zx + pix->cx;
+		zy = sqy;
 		sqx = zx * zx;
 		sqy = zy * zy;
 	}
-	pix->z = zx + zy * I;
 	pix->iters = i;
 	pix->dist = sqx + sqy;
 	return (pix);

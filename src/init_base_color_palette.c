@@ -6,11 +6,11 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 21:13:22 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/18 22:37:12 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/27 06:04:53 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_core.h"
 
 void	init_palette_miami(t_pal *pal)
 {
@@ -37,7 +37,6 @@ void	init_palette_miami(t_pal *pal)
 	pal->palette[6][0] = 0xff;
 	pal->palette[6][1] = 0xff;
 	pal->palette[6][2] = 0xff;
-	printf("Miami color palette engaged !\n");
 }
 
 void	init_palette_monochrome(t_pal *pal)
@@ -50,7 +49,6 @@ void	init_palette_monochrome(t_pal *pal)
 	pal->palette[1][0] = 0xff;
 	pal->palette[1][1] = 0xff;
 	pal->palette[1][2] = 0xff;
-	printf("Monochrome color palette engaged !\n");
 }
 
 void	init_palette_orange(t_pal *pal)
@@ -69,7 +67,6 @@ void	init_palette_orange(t_pal *pal)
 	pal->palette[3][0] = 0xff;
 	pal->palette[3][1] = 0xff;
 	pal->palette[3][2] = 0xff;
-	printf("Orange color palette engaged !\n");
 }
 
 void	init_palette_green(t_pal *pal)
@@ -88,7 +85,6 @@ void	init_palette_green(t_pal *pal)
 	pal->palette[3][0] = 0xff;
 	pal->palette[3][1] = 0xff;
 	pal->palette[3][2] = 0xff;
-	printf("Green color palette engaged !\n");
 }
 
 void	init_base_color_palette(t_pal *pal, int pal_code)

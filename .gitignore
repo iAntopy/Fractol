@@ -1,5 +1,8 @@
 Fractol
+Fractol_bonus
 legacy/
-.a
-.o
-.out
+*/**/*.a
+*/**/*.o
+*/**/*.bo
+*/**/*.mo
+*/**/*.out

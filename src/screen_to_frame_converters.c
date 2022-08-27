@@ -6,11 +6,11 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 21:03:47 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/18 23:18:33 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/27 06:05:59 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_core.h"
 
 void	convert_pix_to_frame(t_frm *frm, t_pix *pix)
 {
@@ -21,8 +21,8 @@ void	convert_pix_to_frame(t_frm *frm, t_pix *pix)
 
 	cos_ang = cos(frm->ang);
 	sin_ang = sin(frm->ang);
-	fx = pix->sx - SCN_MIDX;
-	fy = pix->sy - SCN_MIDY;
+	fx = pix->sx - frm->scn_midx;
+	fy = pix->sy - frm->scn_midy;
 	pix->fx = frm->zoom * (cos_ang * fx + sin_ang * fy) + frm->px;
 	pix->fy = frm->zoom * (-sin_ang * fx + cos_ang * fy) + frm->py;
 }

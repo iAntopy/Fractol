@@ -6,11 +6,11 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 22:26:49 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/18 22:31:09 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/27 06:07:12 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_core.h"
 
 t_pix	*mandelbrot_5th_order_dist(t_pix *pix)
 {
@@ -34,7 +34,6 @@ t_pix	*mandelbrot_5th_order_dist(t_pix *pix)
 		sq[0] = zx * zx;
 		sq[1] = zy * zy;
 	}
-	pix->z = zx + zy * I;
 	pix->iters = i;
 	pix->dist = sq[0] + sq[1];
 	return (pix);
@@ -62,7 +61,6 @@ t_pix	*julia_5th_order_dist(t_pix *pix)
 		sq[0] = zx * zx;
 		sq[1] = zy * zy;
 	}
-	pix->z = zx + zy * I;
 	pix->iters = i;
 	pix->dist = sq[0] + sq[1];
 	return (pix);

@@ -6,11 +6,11 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 22:23:28 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/18 22:31:35 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/27 06:06:49 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_core.h"
 
 t_pix	*mandelbrot_dist(t_pix *pix)
 {
@@ -33,7 +33,6 @@ t_pix	*mandelbrot_dist(t_pix *pix)
 		zy += zy - pix->fy;
 		zx = sqx - sqy + pix->fx;
 	}
-	pix->z = zx + zy * I;
 	pix->iters = i;
 	pix->dist = sqx + sqy;
 	return (pix);
@@ -60,7 +59,6 @@ t_pix	*julia_dist(t_pix *pix)
 		sqx = zx * zx;
 		sqy = zy * zy;
 	}
-	pix->z = zx + zy * I;
 	pix->iters = i;
 	pix->dist = sqx + sqy;
 	return (pix);

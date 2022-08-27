@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 17:32:17 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/20 07:38:45 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/25 19:40:31 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef struct s_mlx_data
 	int		height;
 	size_t	nb_pix;
 	size_t	buff_size;
-	t_img	*screen_buff;
+	t_img	*scn_buff;
 	t_img	*off_buff;
 	t_img	buff1;
 	t_img	buff2;
@@ -59,7 +59,7 @@ void	mlx_buff_put_pixel(t_img *img, int x, int y, int col);
 void	mlx_draw_line(t_mlx *mlx, int start[2], int end[2], int col);
 void	mlx_clear_buffer(t_mlx *mlx);
 void	mlx_set_bg_color(t_mlx *mlx, int col);
-void	mlx_render_buffer(t_mlx *mlx);
+int		mlx_render_buffer(t_mlx *mlx);
 void	mlx_close(t_mlx *mlx);
 
 #endif

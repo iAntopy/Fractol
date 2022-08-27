@@ -6,11 +6,11 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 19:18:45 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/18 23:33:17 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/08/27 06:07:51 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_core.h"
 
 static int	display_list_commands(void)
 {
@@ -34,8 +34,8 @@ static int	display_list_commands(void)
 
 static int	display_help(void)
 {
-	ft_printf("At least one parameter must be provided to run.\n");
-	ft_printf("\t 1st param is one of the following fractals to display :\n\n");
+	ft_printf("At least one parameter must be provided to run.\n\n");
+	ft_printf("\t 1st param is one of the following fractals to display :\n");
 	ft_printf("\t\t- mandelbrot\n\t\t- mandelbrot julia\n");
 	ft_printf("\t\t- burning ship\n\t\t- burning ship julia\n");
 	ft_printf("\t\t- celtic\n\t\t- celtic julia\n");
@@ -103,6 +103,7 @@ int	parse_inputs(t_frm *frm, int argc, char **argv)
 	parse_arg1(frm, argv[1]);
 	if (!frm->dist_func)
 		return (display_help());
+	printf("dist_func ptr : %p\n", frm->dist_func);
 	if (argc > 2)
 	{
 		if (!parse_arg2(frm, argv[2]))
