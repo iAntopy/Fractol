@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/20 06:33:56 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 07:26:33 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/02 20:33:08 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ static void	update_frame_state(double dfrm[6], t_frm *sfrm)
 	sfrm->py += dfrm[1] / SMOOTHNESS;
 	sfrm->zoom += dfrm[2] / SMOOTHNESS;
 	sfrm->ang += dfrm[3] / SMOOTHNESS;
+	sfrm->cos_a = cos(sfrm->ang);
+	sfrm->sin_a = sin(sfrm->ang);
 	sfrm->cx += dfrm[4] / SMOOTHNESS;
 	sfrm->cy += dfrm[5] / SMOOTHNESS;
 }

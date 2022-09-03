@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/25 19:47:53 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 07:59:34 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/02 21:47:24 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ typedef struct s_mandelbrot_frame
 	double		cx;
 	double		cy;
 	double		ang;
+	double		cos_a;
+	double		sin_a;
 	t_pal		pal;
 	t_dist_func	*dist_func;
 }	t_frm;

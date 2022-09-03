@@ -21,8 +21,8 @@ LIBS		= $(wildcard $(LIBS_DIR)*.a)
 CC			= gcc
 CFLAGS		= -Wall -Werror -Wextra -O2
 
-NAME		= Fractol
-NAME_BONUS	= Fractol_bonus
+NAME		= fractol
+NAME_BONUS	= fractol_bonus
 
 ifeq ($(shell uname -s), Linux)
 	MLX_DIR		= $(LIBS_DIR)minilibx/minilibx-linux/

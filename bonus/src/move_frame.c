@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/23 13:29:32 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/19 04:15:11 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/02 20:30:43 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void	frac_set_frame_pos(t_super *sup, double x, double y)
 void	frac_rotate(t_super *sup, double delta_ang)
 {
 	sup->frm.ang += delta_ang;
+	sup->frm.cos_a = cos(sup->frm.ang);
+	sup->frm.sin_a = sin(sup->frm.ang);
 	sup->needs_update = 1;
 }
 
