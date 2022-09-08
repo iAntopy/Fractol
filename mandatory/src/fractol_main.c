@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 05:42:11 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:45:10 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ t_frm	*init_frame(t_frm *frm)
 	frm->cx = INIT_CREAL;
 	frm->cy = INIT_CIMAG;
 	frm->ang = INIT_ANGLE;
+	frm->cos_a = cos(frm->ang);
+	frm->sin_a = sin(frm->ang);
 	frm->dist_func = mandelbrot_dist;
 	return (frm);
 }

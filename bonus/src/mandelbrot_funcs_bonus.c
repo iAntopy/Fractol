@@ -6,11 +6,11 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:27:04 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 07:25:39 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:09:27 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 
 static int	get_pix_color(int *pal, int nb_cols, double dist, int iters)
 {

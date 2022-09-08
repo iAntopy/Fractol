@@ -6,11 +6,11 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/23 13:29:32 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/02 20:30:43 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:10:19 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 
 void	frac_move_frame(t_super *sup, double deltaX, double deltaY)
 {

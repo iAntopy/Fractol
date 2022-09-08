@@ -6,11 +6,11 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 21:37:57 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/25 18:55:07 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:09:19 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 
 static int	mouse_in_window(int x, int y)
 {

@@ -6,11 +6,11 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/20 06:33:56 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/02 20:33:08 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:10:36 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 
 void	frac_update(t_super *sup)
 {

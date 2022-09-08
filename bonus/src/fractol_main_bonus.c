@@ -6,18 +6,17 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 06:47:33 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:45:54 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 #include <time.h>
 
 int	on_close(t_super *sup, int has_failed, int exit_code)
 {
 	int	p_status;
 
-	printf("Initiating closure.\n");
 	mlx_close(sup->mlx);
 	p_status = sup->pool->pool_status;
 	if (sup->pool && p_status == STATUS_RUNNING)
@@ -50,9 +49,7 @@ static void	init_event_hooks_super_struct_and_shared_mem(t_super *sup)
 	mlx_hook(sup->mlx->win, ON_MOUSEUP, (1L << 3), on_mouse_release, sup);
 	mlx_hook(sup->mlx->win, ON_MOUSEDOWN, (1L << 2), on_mouse_press, sup);
 	mlx_hook(sup->mlx->win, ON_MOUSEMOVE, (1L << 6), on_mouse_drag, sup);
-	printf("registering loop hook\n");
 	mlx_loop_hook(sup->mlx->conn, on_update, sup);
-	printf("registering loop hook DONE\n");
 	sup->update_delay = (size_t)(1.0f / FPS * 1000000);
 }
 
@@ -66,6 +63,8 @@ t_frm	*init_frame(t_frm *frm)
 	frm->cx = INIT_CREAL;
 	frm->cy = INIT_CIMAG;
 	frm->ang = INIT_ANGLE;
+	frm->cos_a = cos(frm->ang);
+	frm->sin_a = sin(frm->ang);
 	frm->dist_func = mandelbrot_dist;
 	return (frm);
 }

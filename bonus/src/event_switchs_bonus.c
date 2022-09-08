@@ -6,11 +6,11 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/07 16:04:35 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 04:58:51 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:09:08 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 
 static void	switch_julia_mandelbrot_mode(t_super *sup, t_frm *frm)
 {

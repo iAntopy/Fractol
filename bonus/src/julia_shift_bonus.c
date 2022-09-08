@@ -6,11 +6,11 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/06 18:33:45 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/25 18:11:48 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:09:32 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 
 void	frac_shift_julia(t_super *sup, double real, double imag)
 {

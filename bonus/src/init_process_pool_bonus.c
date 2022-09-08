@@ -6,11 +6,11 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/24 12:37:38 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/25 18:34:15 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:09:41 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 #include <unistd.h>
 #include <sys/wait.h>
 

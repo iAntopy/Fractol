@@ -6,11 +6,11 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/19 04:13:36 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 05:35:35 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:10:26 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol_bonus.h"
 
 void	frac_zoom(t_super *sup, double increment)
 {

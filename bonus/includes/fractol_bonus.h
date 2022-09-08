@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fractol.h                                          :+:      :+:    :+:   */
+/*   fractol_bonus.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 08:00:25 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 09:24:14 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FRACTOL_H
-# define FRACTOL_H
+#ifndef FRACTOL_BONUS_H
+# define FRACTOL_BONUS_H
 
 # include <signal.h>
 # include <sys/mman.h>
@@ -26,60 +26,10 @@
 # define ZM_THLD 0.1
 # define RT_THLD 0.031415
 # define JL_THLD 0.002
-# define SMOOTHNESS 20// nb of subdivisions of a movement. (Higher is smoother.)
 
-/*
-typedef struct s_palette
-{
-	int	pal_code;
-	int	nb_cols;
-	int	palette[10][3];
-}	t_pal;
+// nb of subdivisions of a movement. (Higher is smoother.)
+# define SMOOTHNESS 20
 
-typedef struct s_pixel
-{
-	double			sx;
-	double			sy;
-	double			fx;
-	double			fy;
-	double			cx;
-	double			cy;
-	double			dist;
-	int				iters;
-}	t_pix;
-
-typedef	t_pix	*(t_dist_func)(t_pix *);
-
-typedef struct s_mandelbrot_frame
-{
-	int			scn_midx;
-	int			scn_midy;
-	double		zoom;
-	double		px;
-	double		py;
-	double		cx;
-	double		cy;
-	double		ang;
-	t_pal		pal;
-	t_dist_func	*dist_func;
-}	t_frm;
-
-enum	e_palette_codes
-{
-	PALETTE_MIAMI,
-	PALETTE_MONOCHROME,
-	PALETTE_ORANGE,
-	PALETTE_GREEN
-};
-
-enum	e_exit_codes
-{
-	EXIT_SHARED_MEM_FAILED,
-	EXIT_PARSING_FAILED,
-	EXIT_BROKEN_POOL,
-	EXIT_FORCED_CLOSE
-};
-*/
 enum	e_process_status
 {
 	P_STOPPED = 0,
