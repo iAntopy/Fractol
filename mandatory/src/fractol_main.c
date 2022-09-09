@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/08 09:45:10 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/09 02:34:50 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ t_frm	*reset_frame(t_frm *frm)
 	frm->px = INIT_POSX;
 	frm->py = INIT_POSY;
 	frm->ang = INIT_ANGLE;
+	frm->cos_a = cos(frm->ang);
+	frm->sin_a = sin(frm->ang);
 	return (frm);
 }
 
