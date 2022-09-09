@@ -6,15 +6,13 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/25 19:47:53 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/02 21:47:24 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/09 02:11:23 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRACTOL_CORE_H
 # define FRACTOL_CORE_H
 
-# include <stdlib.h>
-# include <stdio.h>
 # include <math.h>
 
 # include "mlx.h"
