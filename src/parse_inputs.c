@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 19:18:45 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/08 09:51:59 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/08 23:44:08 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,8 @@ int	parse_inputs(t_frm *frm, int argc, char **argv)
 	parse_arg1(frm, argv[1]);
 	if (!frm->dist_func)
 		return (display_help());
-	if (argc > 2)
-		if (!parse_arg2(frm, argv[2]))
-			return (0);
+	if (argc > 2 && !parse_arg2(frm, argv[2]))
+		return (0);
 	else
 		init_base_color_palette(&frm->pal, PALETTE_MIAMI);
 	return (1);
