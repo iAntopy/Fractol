@@ -22,28 +22,21 @@ NAME		= fractol
 NAME_BONUS	= fractol_bonus
 
 ifeq ($(shell uname -s), Linux)
-	MLX_DIR		= minilibx/minilibx-linux/
-	FRAMEWORKS	= -lm -lX11 -lXext
+	FRAMEWORKS	= -lm -lmlx -lX11 -lXext
 endif
 ifeq ($(shell uname -s), Darwin)
-	MLX_DIR		= minilibx/minilibx_macos/
-	FRAMEWORKS	= -framework OpenGL -framework Appkit
+	FRAMEWORKS	= -framework OpenGL -framework Appkit -lmlx
 endif
 
 LIBFT		= libft/libft.a
-LIBMLX		= $(MLX_DIR)libmlx.a
 LIBMLXADDS	= mlx_addons/libmlxadds.a
-LIBS		= $(LIBFT) $(LIBMLX) $(LIBMLXADDS)
+LIBS		= $(LIBFT) $(LIBMLXADDS)
 
 $(OBJ_M):	SPEC_INCL := -I$(MAN_INCL)
 $(OBJ_B):	SPEC_INCL := -I$(BNS_INCL)
 
 %.o:	%.c
 	$(CC) $(CFLAGS) -I$(BASE_INCL) $(SPEC_INCL) -c $< -o $@
-#%.mo:	%.c
-#	$(CC) $(CFLAGS) -I$(BASE_INCL) $(SPEC_INLC) -c $< -o $@
-#%.bo:	%.c
-#	$(CC) $(CFLAGS) -I$(BASE_INCL) -I$(BNS_INCL) -c $< -o $@
 
 all:	$(NAME)
 
@@ -58,7 +51,6 @@ bonus:	$(NAME_BONUS)
 clean: clean_commons clean_mandatory clean_bonus
 	make -C $(LIBS_DIR)libft clean
 	make -C $(LIBS_DIR)mlx_addons clean
-	make -C $(MLX_DIR) clean
 
 clean_commons:
 	rm -f $(OBJ_COM)
@@ -75,8 +67,6 @@ fclean:	clean
 
 $(LIBFT):
 	make -C libft/
-$(LIBMLX):
-	make -C $(MLX_DIR)
 $(LIBMLXADDS):
 	make -C mlx_addons/
 
