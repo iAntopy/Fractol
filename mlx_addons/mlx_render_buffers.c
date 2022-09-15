@@ -6,11 +6,10 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 23:04:27 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/25 19:41:40 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/14 22:40:43 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mlx.h"
 #include "mlxadds.h"
 
 // pushes screen_buff to window and swaps buffers for next draw.

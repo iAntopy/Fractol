@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/25 19:47:53 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/09 02:11:23 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/14 22:19:23 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <math.h>
 
-# include "mlx.h"
+# include <mlx.h>
 # include "mlxadds.h"
 # include "keycodes.h"
 # include "libft.h"

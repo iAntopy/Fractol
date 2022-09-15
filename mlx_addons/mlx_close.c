@@ -6,7 +6,7 @@
 /*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/25 21:24:57 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/25 19:23:57 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/14 22:33:45 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	mlx_close(t_mlx *mlx)
 	mlx->scn_buff = NULL;
 	mlx->off_buff = NULL;
 	mlx_destroy_window(mlx->conn, mlx->win);
-	printf("mlx_close : mlx close SUCCESSFUL !\n");
+	ft_printf("mlx_close : mlx close SUCCESSFUL !\n");
 }
 
 #elif __linux__
@@ -38,6 +38,6 @@ void	mlx_close(t_mlx *mlx)
 	mlx->off_buff = NULL;
 	mlx_destroy_window(mlx->conn, mlx->win);
 	mlx_destroy_display(mlx->conn);
-	printf("mlx_close : mlx close SUCCESSFUL !\n");
+	ft_printf("mlx_close : mlx close SUCCESSFUL !\n");
 }
 #endif

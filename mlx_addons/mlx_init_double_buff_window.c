@@ -6,11 +6,10 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 04:01:40 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/08/27 04:33:18 by iamongeo         ###   ########.fr       */
+/*   Updated: 2022/09/14 22:41:20 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mlx.h"
 #include "mlxadds.h"
 
 static int	init_screen_buffers(t_mlx *mlx, t_img *b1, t_img *b2)
