@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fractol_main.c                                     :+:      :+:    :+:   */
+/*   fractol_main_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
+/*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:18:06 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/09 01:35:16 by iamongeo         ###   ########.fr       */
+/*   Updated: 2023/05/02 13:07:41 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ int	main(int argc, char **argv)
 	sup.pool = &pool;
 	init_event_hooks_super_struct_and_shared_mem(&sup);
 	frac_update(&sup);
+	display_list_commands();
 	mlx_loop(mlx.conn);
 	return (EXIT_SUCCESS);
 }

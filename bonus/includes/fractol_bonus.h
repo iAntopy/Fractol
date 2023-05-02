@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fractol_bonus.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
+/*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 20:20:21 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/08 09:24:14 by iamongeo         ###   ########.fr       */
+/*   Updated: 2023/05/02 13:08:22 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,5 +107,7 @@ int		init_process_pool(t_pool *pool, t_shmem *sm);
 int		close_process_pool(t_pool *pool, char *err_msg);
 int		force_close_process_pool(t_pool *pool, char *err_msg);
 int		order_pool_draw(t_pool *pool, t_shmem *sm);
+
+int		display_list_commands(void);
 
 #endif

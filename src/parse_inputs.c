@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   parse_inputs.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iamongeo <marvin@42quebec.com>             +#+  +:+       +#+        */
+/*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 19:18:45 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/09 01:25:46 by iamongeo         ###   ########.fr       */
+/*   Updated: 2023/05/02 13:10:56 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol_core.h"
 
-static int	display_list_commands(void)
+int	display_list_commands(void)
 {
 	ft_printf("\nKeybindings :\n\n");
 	ft_printf("\t\t- [w,a,s,d] | numpad [8,4,5,6] : up, left, down, right\n");
@@ -25,10 +25,10 @@ static int	display_list_commands(void)
 	ft_printf("\t\t- Backspace : Switch fractal being displayed\n");
 	ft_printf("\t\t- c : Switch color palette\n");
 	ft_printf("\nMouse commands :\n\n");
-	ft_printf("\t\t- Mouse click : set focus position\n");
+//	ft_printf("\t\t- Mouse click : set focus position\n");
 	ft_printf("\t\t- Mouse wheel : zoom in/out directional\n");
 	ft_printf("\t\t- Mouse left drag : slide frame position\n");
-	ft_printf("\t\t- Mouse wheel button drag : slide C param for julia set\n");
+	ft_printf("\t\t- Mouse wheel button drag : shift julia set parameter.\n");
 	return (0);
 }
 
