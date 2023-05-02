@@ -6,7 +6,7 @@
 /*   By: iamongeo <iamongeo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 17:32:17 by iamongeo          #+#    #+#             */
-/*   Updated: 2022/09/14 22:39:51 by iamongeo         ###   ########.fr       */
+/*   Updated: 2023/05/01 15:48:34 by iamongeo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <stdlib.h>
 
-# include <mlx.h>
+# include "mlx.h"
 # include "libft.h"
 
 enum	e_event_codes
@@ -54,11 +54,14 @@ typedef struct s_mlx_data
 
 t_mlx	*mlx_init_double_buff_window(t_mlx *mlx, int w, int h, char *title);
 int		mlx_swap_buffers(t_mlx *mlx);
+int	*mlx_index_buffer(t_img *buff, int x, int y);
 void	mlx_buff_put_pixel(t_img *img, int x, int y, int col);
 void	mlx_draw_line(t_mlx *mlx, int start[2], int end[2], int col);
 void	mlx_clear_buffer(t_mlx *mlx);
 void	mlx_set_bg_color(t_mlx *mlx, int col);
+void	mlx_fill_color_region(t_mlx *mlx, int start[2], int end[2], int col);
 int		mlx_render_buffer(t_mlx *mlx);
 void	mlx_close(t_mlx *mlx);
+void	mlx_get_info(t_mlx *mlx);
 
 #endif

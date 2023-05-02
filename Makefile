@@ -22,15 +22,21 @@ NAME		= fractol
 NAME_BONUS	= fractol_bonus
 
 ifeq ($(shell uname -s), Linux)
-	FRAMEWORKS	= -lm -lmlx -lX11 -lXext
+	MINILIBX_PATH	= minilibx/minilibx-linux/
+	LIBMLX		= $(MINILIBX_PATH)libmlx.a
+	FRAMEWORKS	= -lm -lXext -lX11
 endif
 ifeq ($(shell uname -s), Darwin)
-	FRAMEWORKS	= -framework OpenGL -framework Appkit -lmlx
+	MINILIBX_PATH	= minilibx/minilibx_macos/
+	LIBMLX			= $(MINILIBX_PATH)libmlx.a
+	FRAMEWORKS	= -framework OpenGL -framework Appkit
 endif
+
+SUBMODULES	= $(MINILIBX_PATH)
 
 LIBFT		= libft/libft.a
 LIBMLXADDS	= mlx_addons/libmlxadds.a
-LIBS		= $(LIBFT) $(LIBMLXADDS)
+LIBS		= $(LIBMLXADDS) $(LIBMLX) $(LIBFT) 
 
 $(OBJ_M):	SPEC_INCL := -I$(MAN_INCL)
 $(OBJ_B):	SPEC_INCL := -I$(BNS_INCL)
@@ -38,15 +44,18 @@ $(OBJ_B):	SPEC_INCL := -I$(BNS_INCL)
 %.o:	%.c
 	$(CC) $(CFLAGS) -I$(BASE_INCL) $(SPEC_INCL) -c $< -o $@
 
-all:	$(NAME)
+all:	$(NAME_BONUS)
 
-$(NAME):	$(LIBS) $(OBJ_COM) $(OBJ_M)
-	$(CC) $(CFLAGS) $(FRAMEWORKS) $(OBJ_COM) $(OBJ_M) -o $(NAME) $(LIBS)
+$(NAME):	$(LIBS) $(OBJ_COM) $(OBJ_M) $(SUBMODULES)
+	$(CC) $(CFLAGS) $(OBJ_COM) $(OBJ_M) -o $(NAME) $(FRAMEWORKS) $(LIBS)
 
-$(NAME_BONUS):	$(LIBS) $(OBJ_COM) $(OBJ_B)
-	$(CC) $(CFLAGS) $(FRAMEWORKS) $(OBJ_COM) $(OBJ_B) -o $(NAME_BONUS) $(LIBS)
+$(NAME_BONUS):	$(LIBS) $(OBJ_COM) $(OBJ_B) $(SUBMODULES)
+	$(CC) $(CFLAGS) $(OBJ_COM) $(OBJ_B) -o $(NAME) $(FRAMEWORKS) $(LIBS)
 
 bonus:	$(NAME_BONUS)
+
+$(SUBMODULES):
+	git submodule update --init --remote
 
 clean: clean_commons clean_mandatory clean_bonus
 	make -C $(LIBS_DIR)libft clean
@@ -63,10 +72,14 @@ clean_man:	clean_mandatory
 fclean:	clean
 	rm -f $(NAME)
 	rm -f $(NAME_BONUS)
-	rm -f $(LIBS)
+#	rm -f $(LIBS)
 
 $(LIBFT):
 	make -C libft/
+
+$(LIBMLX): $(SUBMODULES)
+	@make -C $(MINILIBX_PATH)
+
 $(LIBMLXADDS):
 	make -C mlx_addons/
 
